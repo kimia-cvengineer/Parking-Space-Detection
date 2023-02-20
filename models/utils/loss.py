@@ -13,6 +13,7 @@ class FocalLoss(nn.Module):
         self.gamma = gamma
         self.weight = weight
         self.reduction = reduction
+        print("************** Focal loss **************")
 
     def forward(self, input, target):
         """
