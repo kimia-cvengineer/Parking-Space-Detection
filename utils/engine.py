@@ -41,6 +41,7 @@ def train_one_epoch(model, optimizer, ds, res):
 
             # compute loss
             loss = loss_func(class_logits, labels)
+            print("LOSS : ", loss)
             loss.backward()
             loss_list += [loss.tolist()]
             
