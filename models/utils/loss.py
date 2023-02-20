@@ -20,10 +20,12 @@ class FocalLoss(nn.Module):
         input: [N, C], float32
         target: [N, ], int64
         """
+        print("In forward")
         logpt = F.log_softmax(input, dim=1)
         pt = torch.exp(logpt)
         logpt = (1 - pt) ** self.gamma * logpt
         loss = F.nll_loss(logpt, target, self.weight)
+        print("HERE")
         if self.reduction == 'mean':
             return torch.mean(loss)
         elif self.reduction == 'sum':
