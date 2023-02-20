@@ -40,7 +40,7 @@ def train_one_epoch(model, optimizer, ds, res):
             class_logits = model(image, rois)
 
             # compute loss
-            loss = loss_func(class_logits, labels)
+            loss = loss_func.forward(class_logits, labels)
             print("LOSS : ", loss)
             loss.backward()
             loss_list += [loss.tolist()]
