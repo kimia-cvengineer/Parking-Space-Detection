@@ -19,6 +19,7 @@ def train_one_epoch(model, optimizer, ds, res):
     device = next(model.parameters()).device
     loss_list = []
     label_match_list = []
+    loss_func = FocalLoss()
 
     for image_batch, rois_batch, labels_batch in ds:
         # compute batch loss
@@ -39,8 +40,7 @@ def train_one_epoch(model, optimizer, ds, res):
             class_logits = model(image, rois)
 
             # compute loss
-            FL = FocalLoss()
-            loss = FL(class_logits, labels)
+            loss = loss_func(class_logits, labels)
             loss.backward()
             loss_list += [loss.tolist()]
             
