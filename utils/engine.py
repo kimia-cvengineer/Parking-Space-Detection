@@ -39,7 +39,8 @@ def train_one_epoch(model, optimizer, ds, res):
             class_logits = model(image, rois)
 
             # compute loss
-            loss = FocalLoss(class_logits, labels)
+            FL = FocalLoss()
+            loss = FL(class_logits, labels)
             loss.backward()
             loss_list += [loss.tolist()]
             
