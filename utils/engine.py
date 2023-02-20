@@ -21,7 +21,6 @@ def train_one_epoch(model, optimizer, ds, res):
     label_match_list = []
 
     loss_func = FocalLoss()
-    print("KKK")
     for image_batch, rois_batch, labels_batch in ds:
         # compute batch loss
         optimizer.zero_grad()
@@ -41,10 +40,9 @@ def train_one_epoch(model, optimizer, ds, res):
             class_logits = model(image, rois)
 
             # compute loss
-            print("JJJ")
             loss = loss_func(class_logits, labels)
-            print("LOSS : ", loss)
-            # loss.backward()
+            print("loss : ", loss)
+            loss.backward()
             loss_list += [loss.tolist()]
             
             # compute accuracy
@@ -73,7 +71,8 @@ def eval_one_epoch(model, ds, res):
     device = next(model.parameters()).device
     loss_list = []
     label_match_list = []
-    
+    loss_func = FocalLoss()
+
     for image_batch, rois_batch, labels_batch in ds:
         for image, rois, labels in zip(image_batch, rois_batch, labels_batch):
             # load data
@@ -88,7 +87,7 @@ def eval_one_epoch(model, ds, res):
             class_logits = model(image, rois)
 
             # compute loss
-            loss = F.cross_entropy(class_logits, labels)
+            loss = loss_func(class_logits, labels)
             loss_list += [float(loss)]
             
             # compute accuracy
