@@ -5,6 +5,7 @@ import shutil
 import torch
 import torch.nn.functional as F
 
+from models.utils.loss import FocalLoss
 from . import transforms
 
 def train_one_epoch(model, optimizer, ds, res):
@@ -38,7 +39,7 @@ def train_one_epoch(model, optimizer, ds, res):
             class_logits = model(image, rois)
 
             # compute loss
-            loss = F.cross_entropy(class_logits, labels)
+            loss = FocalLoss(class_logits, labels)
             loss.backward()
             loss_list += [loss.tolist()]
             
