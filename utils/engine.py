@@ -21,6 +21,7 @@ def train_one_epoch(model, optimizer, ds, res):
     label_match_list = []
 
     loss_func = FocalLoss()
+    print("KKK")
     for image_batch, rois_batch, labels_batch in ds:
         # compute batch loss
         optimizer.zero_grad()
@@ -40,6 +41,7 @@ def train_one_epoch(model, optimizer, ds, res):
             class_logits = model(image, rois)
 
             # compute loss
+            print("JJJ")
             loss = loss_func.forward(class_logits, labels)
             print("LOSS : ", loss)
             loss.backward()
