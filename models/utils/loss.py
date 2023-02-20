@@ -24,9 +24,9 @@ class FocalLoss(nn.Module):
         pt = torch.exp(logpt)
         logpt = (1 - pt) ** self.gamma * logpt
         loss = F.nll_loss(logpt, target, self.weight)
-        # if self.reduction == 'mean':
-        #     return torch.mean(loss)
-        # elif self.reduction == 'sum':
-        #     return torch.sum(loss)
-        # else:
-        return loss
+        if self.reduction == 'mean':
+            return torch.mean(loss)
+        elif self.reduction == 'sum':
+            return torch.sum(loss)
+        else:
+            return loss
