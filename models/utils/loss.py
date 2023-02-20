@@ -9,7 +9,7 @@ class FocalLoss(nn.Module):
     '''
 
     def __init__(self, gamma=2, weight=None, reduction='mean'):
-        super(FocalLoss, self).__init__()
+        super().__init__()
         self.gamma = gamma
         self.weight = weight
         self.reduction = reduction
