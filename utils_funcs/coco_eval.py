@@ -3,7 +3,7 @@ import io
 from contextlib import redirect_stdout
 
 import numpy as np
-import pycocotools.mask as mask_util
+# import pycocotools.mask as mask_util
 import torch
 from utils_funcs import utils
 from pycocotools.coco import COCO
