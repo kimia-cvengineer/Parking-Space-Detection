@@ -32,6 +32,7 @@ def train_one_epoch(model, optimizer, data_loader, res, device, epoch, print_fre
             break
         # preprocess image
         res_images = transforms.preprocess(images, device=device, res=res)
+        print("targets : ", targets)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         with torch.cuda.amp.autocast(enabled=scaler is not None):
             loss_dict = model(res_images, targets)
