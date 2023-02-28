@@ -22,7 +22,7 @@ Here's a minimal example to run inference on a trained model. For more, please s
 ```python
 import torch, os, requests
 from models.rcnn import RCNN
-from utils import transforms
+from utils_funcs import transforms
 
 # create model
 model = RCNN()
@@ -30,7 +30,7 @@ model = RCNN()
 # load model weights
 weights_path = 'weights.pt'
 if not os.path.exists(weights_path):
-    r = requests.get('https://storage.googleapis.com/pd-models/RCNN_128_square_gopro.pt')  
+    r = requests.get('https://storage.googleapis.com/pd-models/RCNN_128_square_gopro.pt')
     with open(weights_path, 'wb') as f:
         f.write(r.content)
 model.load_state_dict(torch.load(weights_path, map_location='cpu'))

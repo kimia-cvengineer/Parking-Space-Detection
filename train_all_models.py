@@ -2,7 +2,7 @@ import os
 import torch
 
 from dataset import acpds
-from utils.engine_base import train_model
+from utils_funcs.engine import train_model
 from models.rcnn import RCNN
 from models.faster_rcnn_fpn import FasterRCNN_FPN, create_model
 

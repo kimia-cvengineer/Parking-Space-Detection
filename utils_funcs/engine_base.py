@@ -54,7 +54,7 @@ def train_one_epoch(model, optimizer, ds, res):
             # label_match_list += (pred_lab == labels).tolist()
             
         # update weights
-        # torch.nn.utils.clip_grad_norm_(model.parameters(), 0.1)
+        # torch.nn.utils_funcs.clip_grad_norm_(model.parameters(), 0.1)
         optimizer.step()
     
     # compute mean metrics
@@ -109,7 +109,7 @@ def eval_one_epoch(model, ds, res):
         # , mean_accuracy
 
 
-def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, epochs=100, lr_decay=50, res=None, verbose=False):
+def train_model__(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, epochs=100, lr_decay=50, res=None, verbose=False):
     """
     Trains any model which takes (image, rois) and outputs class_logits.
     Expects dataset.pdosp.PDOSP datasets.
@@ -133,7 +133,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         # evaluate on the valid dataset
         valid_loss, valid_accuracy = eval_one_epoch(model, valid_ds, res)
         
-        # print progess
+        # print progress
         if verbose:
             print(f'epoch {epoch:3} -- train acc: {train_accuracy:.4f} -- valid acc.: {valid_accuracy:.4f} -- {time.time()-t0:.0f} sec')
         
