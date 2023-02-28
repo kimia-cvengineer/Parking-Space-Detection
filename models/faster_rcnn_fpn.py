@@ -52,7 +52,6 @@ class FasterRCNN_FPN(nn.Module):
 
         return class_logits
 
-
 def create_model():
     # load a model pre-trained on COCO
     model = fasterrcnn_resnet50_fpn(weights='DEFAULT')

@@ -12,7 +12,7 @@ from utils_funcs.coco_utils import get_coco_api_from_dataset
 from utils_funcs import utils, transforms
 
 
-def train_one_epoch(model, optimizer, data_loader, res, device, epoch, print_freq, scaler=None):
+def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, print_freq, scaler=None):
     model.train()
     metric_logger = utils.MetricLogger(delimiter="  ")
     metric_logger.add_meter("lr", utils.SmoothedValue(window_size=1, fmt="{value:.6f}"))
@@ -28,7 +28,7 @@ def train_one_epoch(model, optimizer, data_loader, res, device, epoch, print_fre
         )
     for images, targets in metric_logger.log_every(data_loader, print_freq, header):
         # preprocess image
-        res_images = transforms.preprocess(images, device=device, res=res)
+        res_images = transforms.preprocess(images, device=device, res=resolution)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         with torch.cuda.amp.autocast(enabled=scaler is not None):
             loss_dict = model(res_images, targets)
@@ -76,7 +76,7 @@ def _get_iou_types(model):
 
 
 @torch.inference_mode()
-def evaluate(model, data_loader, res, device):
+def evaluate(model, data_loader, resolution, device):
     n_threads = torch.get_num_threads()
     # FIXME remove this and make paste_masks_in_image run on the GPU
     torch.set_num_threads(1)
@@ -90,7 +90,7 @@ def evaluate(model, data_loader, res, device):
     coco_evaluator = CocoEvaluator(coco, iou_types)
     for images, targets in metric_logger.log_every(data_loader, 10, header):
         # preprocess image
-        res_images = transforms.preprocess(images, device=device, res=res)
+        res_images = transforms.preprocess(images, device=device, res=resolution)
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
