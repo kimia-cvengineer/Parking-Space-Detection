@@ -142,6 +142,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
         # evaluate on the valid dataset
         print("*********** evaluation step ***********")
+        print("res : ", res)
         evaluate(model, valid_ds, res, device)
 
         # save weights

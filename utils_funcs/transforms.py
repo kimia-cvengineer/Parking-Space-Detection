@@ -10,6 +10,7 @@ def preprocess(images, device=None, res=None):
     res_images = []
     for image in images:
         # resize image to model input size
+        print("RES: ", res)
         if res is not None:
             image = TF.resize(image, res)
 
