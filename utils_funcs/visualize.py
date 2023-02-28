@@ -2,7 +2,7 @@ import torch
 import torchvision
 import numpy as np
 import matplotlib.pyplot as plt
-
+from matplotlib import patches
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection, LineCollection
 
@@ -29,16 +29,16 @@ def show_warps(warps, nrow=8, fname=None, show=False):
     ax.imshow(image_pt_to_np(image_grid))
     ax.axis('off')
     save_fig(fig, fname, show)
-    
+
 
 def occupancy_colors(scores):
     """
     Set the coloring scheme for occupancy plots.
     """
     colors = np.zeros([len(scores), 3])
-    colors[:, 0] = scores     # red
-    colors[:, 1] = 1 - scores # green
-    colors[:, 2] = 0          # blue
+    colors[:, 0] = scores  # red
+    colors[:, 1] = 1 - scores  # green
+    colors[:, 2] = 0  # blue
     return colors
 
 
@@ -64,14 +64,14 @@ def plot_ds_image(image, rois, occupancy, true_occupancy=None, fname=None, show=
     fig, ax = plt.subplots(figsize=[12, 8])
     ax.imshow(image_pt_to_np(image))
     ax.axis('off')
-    
+
     # convert rois
     C, H, W = image.shape
     rois = rois.cpu().clone()
     rois[..., 0] *= (W - 1)
     rois[..., 1] *= (H - 1)
     rois = rois.numpy()
-    
+
     # plot annotations
     polygons = []
     colors = occupancy_colors(occupancy.cpu().numpy())
@@ -80,22 +80,42 @@ def plot_ds_image(image, rois, occupancy, true_occupancy=None, fname=None, show=
         polygons.append(polygon)
     p = PatchCollection(polygons, match_original=True)
     ax.add_collection(p)
-    
+
     # plot prediction
     if true_occupancy is not None:
         # only show those crosses where the predictions are incorrect
         pred_inc = occupancy.round() != true_occupancy
         rois_subset = rois[pred_inc]
         ann_subset = true_occupancy[pred_inc]
-        
+
         # create an array of crosses for each parking space
-        lines = np.array(rois_subset)[:, [0, 2, 1, 3], :].reshape(len(rois_subset)*2, 2, 2)
+        lines = np.array(rois_subset)[:, [0, 2, 1, 3], :].reshape(len(rois_subset) * 2, 2, 2)
         colors = occupancy_colors(ann_subset.cpu().numpy())
-        
+
         # add the crosses to the plot
         colors = np.repeat(colors, 2, axis=0)
         lc = LineCollection(lines, colors=colors, lw=1)
         ax.add_collection(lc)
-    
+
     # save figure
     save_fig(fig, fname, show)
+
+
+# Function to visualize bounding boxes in the image
+def plot_img_bbox(img, target):
+    # plot the image and bboxes
+    # Bounding boxes are defined as follows: x-min y-min width height
+    fig, a = plt.subplots(1, 1)
+    fig.set_size_inches(5, 5)
+    a.imshow(img)
+    for box in (target['boxes']):
+        x, y, width, height = box[0], box[1], box[2] - box[0], box[3] - box[1]
+        rect = patches.Rectangle((x, y),
+                                 width, height,
+                                 linewidth=2,
+                                 edgecolor='r',
+                                 facecolor='none')
+
+        # Draw the bounding box on top of the image
+        a.add_patch(rect)
+    plt.show()
