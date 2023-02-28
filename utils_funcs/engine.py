@@ -26,10 +26,7 @@ def train_one_epoch(model, optimizer, data_loader, res, device, epoch, print_fre
         lr_scheduler = torch.optim.lr_scheduler.LinearLR(
             optimizer, start_factor=warmup_factor, total_iters=warmup_iters
         )
-    i = 1
     for images, targets in metric_logger.log_every(data_loader, print_freq, header):
-        if i == 2:
-            break
         # preprocess image
         res_images = transforms.preprocess(images, device=device, res=res)
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
@@ -62,7 +59,6 @@ def train_one_epoch(model, optimizer, data_loader, res, device, epoch, print_fre
 
         metric_logger.update(loss=losses_reduced, **loss_dict_reduced)
         metric_logger.update(lr=optimizer.param_groups[0]["lr"])
-        i += 1
 
     return metric_logger
 
@@ -92,10 +88,7 @@ def evaluate(model, data_loader, res, device):
     coco = get_coco_api_from_dataset(data_loader.dataset)
     iou_types = _get_iou_types(model)
     coco_evaluator = CocoEvaluator(coco, iou_types)
-    i = 1
     for images, targets in metric_logger.log_every(data_loader, 100, header):
-        if i == 2:
-            break
         # preprocess image
         res_images = transforms.preprocess(images, device=device, res=res)
 
@@ -112,7 +105,6 @@ def evaluate(model, data_loader, res, device):
         coco_evaluator.update(res)
         evaluator_time = time.time() - evaluator_time
         metric_logger.update(model_time=model_time, evaluator_time=evaluator_time)
-        i+=1
 
     # gather the stats from all processes
     metric_logger.synchronize_between_processes()
