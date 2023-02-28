@@ -154,6 +154,9 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         evaluate(model, valid_ds, res, device)
 
         # save weights
+        model_dir = f'./{model_dir}'
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
     # test model on test dataset
