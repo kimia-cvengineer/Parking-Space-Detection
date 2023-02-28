@@ -208,4 +208,4 @@ def convert_points_2_two(rois: Tensor):
     maxX = torch.amax(rois[:, :, 0], 1)
     maxY = torch.amax(rois[:, :, 1], 1)
 
-    return torch.hstack(minX, minY, maxX, maxY)
+    return torch.hstack((minX, minY, maxX, maxY))
