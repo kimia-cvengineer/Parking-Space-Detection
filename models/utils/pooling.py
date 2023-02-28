@@ -203,10 +203,10 @@ def convert_points_2_two(rois: Tensor):
     be ordered along the second axis (clockwise or anticlockwise).
     """
     # compute coordinates of the squares
-    minX = torch.amin(rois[:, :, 0], 1)
-    minY = torch.amin(rois[:, :, 1], 1)
-    maxX = torch.amax(rois[:, :, 0], 1)
-    maxY = torch.amax(rois[:, :, 1], 1)
+    minX = torch.unsqueeze(torch.amin(rois[:, :, 0], 1), dim=-1)
+    minY = torch.unsqueeze(torch.amin(rois[:, :, 1], 1), dim=-1)
+    maxX = torch.unsqueeze(torch.amax(rois[:, :, 0], 1), dim=-1)
+    maxY = torch.unsqueeze(torch.amax(rois[:, :, 1], 1), dim=-1)
     print("minX shape : ", minX.shape)
     print("hstack shape : ", torch.hstack((minX, minY, maxX, maxY)).shape)
 
