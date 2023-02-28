@@ -196,9 +196,8 @@ def pool_FPN_features(features: List[Tensor], rois: Tensor, size: int, pooling_t
 
 def convert_points_2_two(rois: Tensor):
     """
-    Pool a square arond each ROI from 'tensor'.
-    For an ROI of size [w, h], a square of size
-    [s, s] is pooled, where s = max(w, h).
+    Convert four coordinate of the rois to 2 coordinates of the top left
+    and bottom right to be consistent with COCO metrics.
     'rois' must be in range [0, 1], have shape [N, 4, 2 (x, y)] and
     be ordered along the second axis (clockwise or anticlockwise).
     """
@@ -207,7 +206,5 @@ def convert_points_2_two(rois: Tensor):
     minY = torch.unsqueeze(torch.amin(rois[:, :, 1], 1), dim=-1)
     maxX = torch.unsqueeze(torch.amax(rois[:, :, 0], 1), dim=-1)
     maxY = torch.unsqueeze(torch.amax(rois[:, :, 1], 1), dim=-1)
-    print("minX shape : ", minX.shape)
-    print("hstack shape : ", torch.hstack((minX, minY, maxX, maxY)).shape)
 
     return torch.hstack((minX, minY, maxX, maxY))

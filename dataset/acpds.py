@@ -58,6 +58,7 @@ class ACPDS():
         # load rois
         rois = self.rois_list[idx]
         rois = torch.tensor(rois)
+        rois = convert_points_2_two(rois)
 
         # getting the areas of the boxes
         area = (rois[:, 3] - rois[:, 1]) * (rois[:, 2] - rois[:, 0])
@@ -66,7 +67,7 @@ class ACPDS():
         iscrowd = torch.zeros((rois.shape[0],), dtype=torch.int64)
 
         target = {}
-        target["boxes"] = convert_points_2_two(rois)
+        target["boxes"] = rois
         target["labels"] = occupancy
         target["area"] = area
         target["iscrowd"] = iscrowd
