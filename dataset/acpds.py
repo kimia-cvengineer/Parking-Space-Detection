@@ -7,6 +7,8 @@ import torchvision.transforms.functional as TF
 from torch.utils.data import DataLoader
 from functools import lru_cache
 
+from utils_funcs import utils
+
 
 class ACPDS():
     """
@@ -94,7 +96,7 @@ def create_datasets(dataset_path, *args, **kwargs):
     ds_valid = ACPDS(dataset_path, 'valid', *args, **kwargs)
     ds_test = ACPDS(dataset_path, 'test', *args, **kwargs)
 
-    data_loader_train = DataLoader(ds_train, batch_size=2, shuffle=True)
-    data_loader_valid = DataLoader(ds_valid, batch_size=2, shuffle=False)
-    data_loader_test = DataLoader(ds_test, batch_size=2, shuffle=False)
+    data_loader_train = DataLoader(ds_train, batch_size=1, shuffle=True, collate_fn=utils.collate_fn)
+    data_loader_valid = DataLoader(ds_valid, batch_size=1, shuffle=False, collate_fn=utils.collate_fn)
+    data_loader_test = DataLoader(ds_test, batch_size=1, shuffle=False, collate_fn=utils.collate_fn)
     return data_loader_train, data_loader_valid, data_loader_test
