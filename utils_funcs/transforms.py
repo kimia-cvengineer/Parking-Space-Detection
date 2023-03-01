@@ -22,7 +22,6 @@ def preprocess(images, device=None, res=None):
         if device is not None:
             image = image.to(device)
         res_images.append(image)
-    print("image size: ", images[0].shape)
 
     return res_images
 
