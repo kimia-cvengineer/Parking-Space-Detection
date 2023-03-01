@@ -26,7 +26,7 @@ for i in range(5):
     # train_model(RCNN(roi_res=256, pooling_type='square'), train_ds, valid_ds, test_ds, f'{wd}/RCNN_256_square_{i}', device)
     #
     # FasterRCNN_FPN
-    train_model(create_model(), train_ds, valid_ds, test_ds, f'{wd}/My_RCNN{i}', device, res=256)
+    train_model(create_model(), train_ds, valid_ds, test_ds, f'{wd}/My_RCNN{i}', device, res=800)
     # train_model(FasterRCNN_FPN(pooling_type='qdrl'),   train_ds, valid_ds, test_ds, f'{wd}/FasterRCNN_FPN_1440_qdrl_{i}',   device, res=1440)
     # train_model(FasterRCNN_FPN(pooling_type='square'), train_ds, valid_ds, test_ds, f'{wd}/FasterRCNN_FPN_1440_square_{i}', device, res=1440)
     # train_model(FasterRCNN_FPN(pooling_type='qdrl'),   train_ds, valid_ds, test_ds, f'{wd}/FasterRCNN_FPN_1100_qdrl_{i}',   device, res=1100)
