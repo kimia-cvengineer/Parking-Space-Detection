@@ -9,7 +9,7 @@ import torch
 import torchvision.models.detection.mask_rcnn
 from utils_funcs.coco_eval import CocoEvaluator
 from utils_funcs.coco_utils import get_coco_api_from_dataset
-from utils_funcs import utils, transforms
+from utils_funcs import utils, transforms, visualize
 
 
 def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, print_freq, scaler=None):
@@ -38,6 +38,13 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         with torch.cuda.amp.autocast(enabled=scaler is not None):
             loss_dict = model(res_images, targets)
             losses = sum(loss for loss in loss_dict.values())
+
+        i = 0
+        for image, target in zip(images, targets):
+            if i == 3:
+                break
+            i += 1
+            visualize.plot_img_bbox(image, target)
 
         # reduce losses over all GPUs for logging purposes
         loss_dict_reduced = utils.reduce_dict(loss_dict)
@@ -141,7 +148,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW(params, lr=lr)
     scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
-
+    epochs = 1
     # train
     for epoch in range(1, epochs + 1):
         # train for one epoch
@@ -150,18 +157,18 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         scheduler.step()
 
         # evaluate on the valid dataset
-        print("*********** evaluation step ***********")
-        evaluate(model, valid_ds, res, device)
-
-        # save weights
-        model_dir = f'./{model_dir}'
-        if not os.path.exists(model_dir):
-            os.makedirs(model_dir)
-        torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
-
-    # test model on test dataset
-    print("*********** testing step ***********")
-    evaluate(model, test_ds, res, device)
+    #     print("*********** evaluation step ***********")
+    #     evaluate(model, valid_ds, res, device)
+    #
+    #     # save weights
+    #     model_dir = f'./{model_dir}'
+    #     if not os.path.exists(model_dir):
+    #         os.makedirs(model_dir)
+    #     torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
+    #
+    # # test model on test dataset
+    # print("*********** testing step ***********")
+    # evaluate(model, test_ds, res, device)
     # with open(f'{model_dir}/test_logs.json', 'w') as f:
     #     json.dump({'loss': test_loss, 'accuracy': test_accuracy}, f)
 
