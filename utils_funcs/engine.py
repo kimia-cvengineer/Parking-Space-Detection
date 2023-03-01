@@ -40,7 +40,7 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
             losses = sum(loss for loss in loss_dict.values())
 
         i = 0
-        for image, target in zip(images, targets):
+        for image, target in zip(res_images, targets):
             if i == 3:
                 break
             i += 1
