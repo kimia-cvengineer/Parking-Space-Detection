@@ -39,24 +39,29 @@ def preprocess(images, rois=None, device=None, res=None):
     return res_images, res_rois
 
 
-def augment(image, rois):
+def augment(images, rois):
     """
     Applies rotation, color jitter, and a flip.
     Runs *much* faster on GPU than CPU, so try to avoid using on CPU.
     """
-    # horizontal flip
-    if torch.rand(1).item() > 0.5:
-        image = TF.hflip(image)
-        rois = rois.clone()
-        rois[:, :, 0] = 1 - rois[:, :, 0]
+    new_images, new_rois = [], []
+    for idx, image in enumerate(images):
+        img_rois = rois[idx]
+        # horizontal flip
+        if torch.rand(1).item() > 0.5:
+            image = TF.hflip(image)
+            img_rois = img_rois.clone()
+            img_rois[:, :, 0] = 1 - img_rois[:, :, 0]
 
-    # color jitter
-    image = T.ColorJitter(brightness=0.3, contrast=0.4, saturation=0.8, hue=0.1)(image)
+        # color jitter
+        image = T.ColorJitter(brightness=0.3, contrast=0.4, saturation=0.8, hue=0.1)(image)
 
-    # random rotation
-    image, rois = random_image_rotation(image, rois, 15)
+        # random rotation
+        image, img_rois = random_image_rotation(image, img_rois, 15)
+        new_images.append(image)
+        new_rois.append(img_rois)
     
-    return image, rois
+    return new_images, new_rois
 
 
 def random_image_rotation(image, points, max_angle=30.0):

@@ -26,8 +26,12 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
             optimizer, start_factor=warmup_factor, total_iters=warmup_iters
         )
     for images, targets in metric_logger.log_every(data_loader, print_freq, header):
+        rois = [t["boxes"] for t in targets]
+        # augment data
+        images, rois = transforms.augment(images, rois)
+
         # preprocess image
-        res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device, res=resolution)
+        res_images, res_rois = transforms.preprocess(images, rois=rois, device=device, res=resolution)
         # update boxed according to the new resolution
         new_target = []
         for idx, target in enumerate(targets):
@@ -165,7 +169,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10)
         lr_scheduler.step()
 
-        #evaluate on the valid dataset
+        # evaluate on the valid dataset
         print("*********** evaluation step ***********")
         evaluate(model, valid_ds, res, device)
 
