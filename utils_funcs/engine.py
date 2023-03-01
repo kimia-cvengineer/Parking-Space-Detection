@@ -27,12 +27,14 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         )
     for images, targets in metric_logger.log_every(data_loader, print_freq, header):
         # preprocess image
-        res_images, res_rois = transforms.preprocess(images, device=device, res=resolution)
-        print("prev boxes: ", targets)
-        targets[:]['boxes'] = res_rois[:]
-        print("current boxes: ", targets)
-
-        targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
+        res_images, res_rois = transforms.preprocess(images, rois=targets[:]['boxes'], device=device, res=resolution)
+        # update boxed according to the new resolution
+        new_target = []
+        for idx, target in targets:
+            if resolution is not None:
+                target["boxes"] = res_rois[idx]["boxes"]
+            new_target.append({k: v.to(device) for k, v in target.items()})
+        targets = new_target
         with torch.cuda.amp.autocast(enabled=scaler is not None):
             loss_dict = model(res_images, targets)
             losses = sum(loss for loss in loss_dict.values())
@@ -94,9 +96,12 @@ def evaluate(model, data_loader, resolution, device):
     for images, targets in metric_logger.log_every(data_loader, 10, header):
         # preprocess image
         res_images, res_rois = transforms.preprocess(images, device=device, res=resolution)
-        print("prev boxes: ", targets)
-        targets[:]['boxes'] = res_rois[:]
-        print("current boxes: ", targets)
+        # update boxed according to the new resolution
+        if resolution is not None:
+            new_target = []
+            for idx, target in targets:
+                target["boxes"] = res_rois[idx]["boxes"]
+            targets = new_target
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
