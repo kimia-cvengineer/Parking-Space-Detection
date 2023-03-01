@@ -32,7 +32,7 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         new_target = []
         for idx, target in enumerate(targets):
             if resolution is not None:
-                target["boxes"] = res_rois[idx]
+                target["boxes"] = torch.tensor(res_rois[idx])
             new_target.append({k: v.to(device) for k, v in target.items()})
         targets = new_target
         with torch.cuda.amp.autocast(enabled=scaler is not None):
@@ -99,7 +99,7 @@ def evaluate(model, data_loader, resolution, device):
         # update boxed according to the new resolution
         if resolution is not None:
             for idx, target in enumerate(targets):
-                target["boxes"] = res_rois[idx]
+                target["boxes"] = torch.tensor(res_rois[idx])
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
