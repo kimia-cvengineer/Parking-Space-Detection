@@ -27,7 +27,8 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         )
     for images, targets in metric_logger.log_every(data_loader, print_freq, header):
         # preprocess image
-        res_images = transforms.preprocess(images, device=device, res=resolution)
+        res_images, res_rois = transforms.preprocess(images, device=device, res=resolution)
+        targets['boxes'] = res_rois
         targets = [{k: v.to(device) for k, v in t.items()} for t in targets]
         with torch.cuda.amp.autocast(enabled=scaler is not None):
             loss_dict = model(res_images, targets)
@@ -89,7 +90,8 @@ def evaluate(model, data_loader, resolution, device):
     coco_evaluator = CocoEvaluator(coco, iou_types)
     for images, targets in metric_logger.log_every(data_loader, 10, header):
         # preprocess image
-        res_images = transforms.preprocess(images, device=device, res=resolution)
+        res_images, res_rois = transforms.preprocess(images, device=device, res=resolution)
+        targets['boxes'] = res_rois
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
