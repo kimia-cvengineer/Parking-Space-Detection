@@ -88,7 +88,9 @@ def augment(images, targets):
     new_images, new_targets = list(images), list(targets)
     i = 0
     transforms = get_transform(True)
+    print("targets : ", targets)
     for img, target in zip(images, targets):
+        print("target : ", target)
         sample = transforms(image=img,
                             bboxes=target['boxes'],
                             labels=target['labels'])
