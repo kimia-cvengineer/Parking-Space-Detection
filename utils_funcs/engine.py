@@ -27,7 +27,7 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         )
     for images, targets in metric_logger.log_every(data_loader, print_freq, header):
         # preprocess image
-        res_images, res_rois = transforms.preprocess(images, rois=targets[:]['boxes'], device=device, res=resolution)
+        res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device, res=resolution)
         # update boxed according to the new resolution
         new_target = []
         for idx, target in targets:
@@ -95,7 +95,7 @@ def evaluate(model, data_loader, resolution, device):
     coco_evaluator = CocoEvaluator(coco, iou_types)
     for images, targets in metric_logger.log_every(data_loader, 10, header):
         # preprocess image
-        res_images, res_rois = transforms.preprocess(images, device=device, res=resolution)
+        res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device, res=resolution)
         # update boxed according to the new resolution
         if resolution is not None:
             new_target = []
