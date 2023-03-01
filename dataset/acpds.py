@@ -58,6 +58,10 @@ class ACPDS():
         # load rois
         rois = self.rois_list[idx]
         rois = torch.tensor(rois)
+        C, H, W = image.shape
+
+        rois[..., 0] *= (W - 1)
+        rois[..., 1] *= (H - 1)
         rois = convert_points_2_two(rois)
 
         # getting the areas of the boxes

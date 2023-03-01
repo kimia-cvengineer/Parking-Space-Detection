@@ -109,13 +109,10 @@ def plot_img_bbox(img, target):
     # fig.set_size_inches(5, 5)
     a.imshow(image_pt_to_np(img))
     # convert rois
-    C, H, W = img.shape
+    # C, H, W = img.shape
 
     for box in (target['boxes']):
-        x, y = box[0]*(W - 1), box[1]*(H - 1)
-
-        width, height = (box[2] - box[0])*(W - 1), (box[3] - box[1])*(H - 1)
-
+        x, y, width, height = box[0], box[1], box[2]-box[0], box[3]-box[1]
         rect = patches.Rectangle((x, y),
                                  width, height,
                                  linewidth=2,
