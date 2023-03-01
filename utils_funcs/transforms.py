@@ -50,8 +50,10 @@ def augment(images, rois):
         # horizontal flip
         if torch.rand(1).item() > 0.5:
             image = TF.hflip(image)
+            _, _, w = image.shape
             img_rois = img_rois.clone()
-            img_rois[:, :, 0] = 1 - img_rois[:, :, 0]
+            img_rois[:, 0] = w - img_rois[:, 0]
+            img_rois[:, 2] = w - img_rois[:, 2]
 
         # color jitter
         image = T.ColorJitter(brightness=0.3, contrast=0.4, saturation=0.8, hue=0.1)(image)
