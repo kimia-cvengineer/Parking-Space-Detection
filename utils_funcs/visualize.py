@@ -105,11 +105,17 @@ def plot_ds_image(image, rois, occupancy, true_occupancy=None, fname=None, show=
 def plot_img_bbox(img, target):
     # plot the image and bboxes
     # Bounding boxes are defined as follows: x-min y-min width height
-    fig, a = plt.subplots(1, 1)
-    fig.set_size_inches(5, 5)
+    fig, a = plt.subplots(figsize=[12, 8])
+    # fig.set_size_inches(5, 5)
     a.imshow(image_pt_to_np(img))
+    # convert rois
+    C, H, W = img.shape
+
     for box in (target['boxes']):
-        x, y, width, height = box[0], box[1], box[2] - box[0], box[3] - box[1]
+        x, y = box[0]*(W - 1), box[1]*(H - 1)
+
+        width, height = (box[2] - box[0])*(W - 1), (box[3] - box[1])*(H - 1)
+
         rect = patches.Rectangle((x, y),
                                  width, height,
                                  linewidth=2,
