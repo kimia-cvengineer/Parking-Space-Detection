@@ -3,15 +3,26 @@ import torchvision.transforms as T
 import torchvision.transforms.functional as TF
 
 
-def preprocess(images, device=None, res=None):
+def preprocess(images, rois=None, device=None, res=None):
     """
-    Resizes, normalizes, and converts image to float32.
+    Resizes, normalizes, and converts image and its corresponding rois to float32.
     """
     res_images = []
     for image in images:
         # resize image to model input size
         if res is not None:
+            _, prev_h, prev_w = image.shape
             image = TF.resize(image, res)
+            # correct rois for image size given
+            _, new_h, new_w = image.shape
+            res_rois = []
+            if rois is not None:
+                for roi in rois:
+                    xmin_corr = (roi[0] / prev_w) * new_w
+                    xmax_corr = (roi[2] / prev_w) * new_w
+                    ymin_corr = (roi[1] / prev_h) * new_h
+                    ymax_corr = (roi[3] / prev_h) * new_h
+                    res_rois.append([xmin_corr, ymin_corr, xmax_corr, ymax_corr])
 
         # convert image to float
         image = image.to(torch.float32) / 255
@@ -22,7 +33,7 @@ def preprocess(images, device=None, res=None):
             image = image.to(device)
         res_images.append(image)
 
-    return res_images
+    return res_images, res_rois
 
 
 def augment(image, rois):
