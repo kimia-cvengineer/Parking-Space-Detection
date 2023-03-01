@@ -7,22 +7,23 @@ def preprocess(images, rois=None, device=None, res=None):
     """
     Resizes, normalizes, and converts image and its corresponding rois to float32.
     """
-    res_images, res_rois = [], None
-    for image in images:
+    res_images, res_rois = [], []
+    for idx, image in enumerate(images):
         # resize image to model input size
         if res is not None:
             _, prev_h, prev_w = image.shape
             image = TF.resize(image, res)
             # correct rois for image size given
             _, new_h, new_w = image.shape
-            res_rois = []
             if rois is not None:
-                for roi in rois:
+                new_rois = []
+                prev_rois = rois[idx]
+                for roi in prev_rois:
                     xmin_corr = (roi[0] / prev_w) * new_w
                     xmax_corr = (roi[2] / prev_w) * new_w
                     ymin_corr = (roi[1] / prev_h) * new_h
                     ymax_corr = (roi[3] / prev_h) * new_h
-                    res_rois.append([xmin_corr, ymin_corr, xmax_corr, ymax_corr])
+                    new_rois.append([xmin_corr, ymin_corr, xmax_corr, ymax_corr])
 
         # convert image to float
         image = image.to(torch.float32) / 255
@@ -31,6 +32,8 @@ def preprocess(images, rois=None, device=None, res=None):
         image = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])(image)
         if device is not None:
             image = image.to(device)
+        if res is not None and rois is not None:
+            res_rois.append(new_rois)
         res_images.append(image)
 
     return res_images, res_rois
