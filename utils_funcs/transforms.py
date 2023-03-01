@@ -85,7 +85,7 @@ def get_transform(train):
 
 
 def augment(images, targets):
-    new_images, new_targets = images.clone(), targets.clone()
+    new_images, new_targets = list(images), list(targets)
     i = 0
     transforms = get_transform(True)
     for img, target in zip(images, targets):
