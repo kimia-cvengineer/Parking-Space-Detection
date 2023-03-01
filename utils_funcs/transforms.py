@@ -36,7 +36,7 @@ def preprocess(images, rois=None, device=None, res=None):
             res_rois.append(new_rois)
         res_images.append(image)
 
-    return res_images, res_rois
+    return res_images, torch.as_tensor(res_rois, dtype=torch.float32)
 
 
 def augment(image, rois):
