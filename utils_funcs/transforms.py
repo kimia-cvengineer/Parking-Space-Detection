@@ -1,3 +1,4 @@
+import numpy
 import torch
 import torchvision.transforms as T
 import torchvision.transforms.functional as TF
@@ -89,8 +90,10 @@ def augment(images, targets):
     i = 0
     print("targets : ", new_targets)
     transforms = get_transform(True)
+    print("img type : ", type(images[0]))
     for img, target in zip(images, targets):
-        print("target : ", target)
+        if not isinstance(img, numpy.ndarray):
+            img = img.permute(1, 2, 0).numpy()
         sample = transforms(image=img,
                             bboxes=target['boxes'],
                             labels=target['labels'])
