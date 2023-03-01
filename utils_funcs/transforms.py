@@ -2,6 +2,10 @@ import torch
 import torchvision.transforms as T
 import torchvision.transforms.functional as TF
 
+# for image augmentations
+import albumentations as A
+from albumentations.pytorch.transforms import ToTensorV2
+
 
 def preprocess(images, rois=None, device=None, res=None):
     """
@@ -39,7 +43,7 @@ def preprocess(images, rois=None, device=None, res=None):
     return res_images, res_rois
 
 
-def augment(images, rois):
+def prev_augment(images, rois):
     """
     Applies rotation, color jitter, and a flip.
     Runs *much* faster on GPU than CPU, so try to avoid using on CPU.
@@ -62,8 +66,37 @@ def augment(images, rois):
         image, img_rois = random_image_rotation(image, img_rois, 15)
         new_images.append(image)
         new_rois.append(img_rois)
-    
+
     return new_images, new_rois
+
+
+# Send train=True for training transforms and False for val/test transforms
+def get_transform(train):
+    if train:
+        return A.Compose([
+            A.HorizontalFlip(0.5),
+            # ToTensorV2 converts image to pytorch tensor without div by 255
+            ToTensorV2(p=1.0)
+        ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
+    else:
+        return A.Compose([
+            ToTensorV2(p=1.0)
+        ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
+
+
+def augment(images, targets):
+    new_images, new_targets = images.clone(), targets.clone()
+    i = 0
+    transforms = get_transform(True)
+    for img, target in zip(images, targets):
+        sample = transforms(image=img,
+                            bboxes=target['boxes'],
+                            labels=target['labels'])
+
+        new_images[i] = sample['image']
+        new_targets[i]['boxes'] = torch.Tensor(sample['bboxes'])
+        i += 1
+    return new_images, new_targets
 
 
 def random_image_rotation(image, points, max_angle=30.0):
@@ -72,42 +105,42 @@ def random_image_rotation(image, points, max_angle=30.0):
     Runs *much* faster on GPU than CPU, so try to avoid using on CPU.
     """
     device = image.device
-    
+
     # check that the points are within [0, 1]
     assert points.min() >= 0, points.min()
     assert points.max() <= 1, points.max()
 
     # generate random rotation angle in range [-max_angle, max_angle]
-    angle_deg = (2*torch.rand(1).item() - 1) * max_angle
-    
+    angle_deg = (2 * torch.rand(1).item() - 1) * max_angle
+
     # rotate the image and note the change in resolutions
     _, H1, W1 = image.shape
     image = TF.rotate(image, angle_deg, expand=True)
     _, H2, W2 = image.shape
-    
+
     # create rotation matrix
     angle_rad = torch.tensor((angle_deg / 180.0) * 3.141592)
     R = torch.tensor([[torch.cos(angle_rad), -torch.sin(angle_rad)],
-                      [torch.sin(angle_rad),  torch.cos(angle_rad)]], dtype=torch.float, device=device)
-    
+                      [torch.sin(angle_rad), torch.cos(angle_rad)]], dtype=torch.float, device=device)
+
     # move points to an absolute cooridnate system with [0, 0] as the center of the image
     points = points.clone()
     points -= 0.5
     points[..., 0] *= (W1 - 1)
     points[..., 1] *= (H1 - 1)
-    
+
     # rotate the points
     points = points @ R
-    
+
     # move points back to the relative coordinate system
     points[..., 0] /= (W2 - 1)
     points[..., 1] /= (H2 - 1)
     points += 0.5
-    
+
     # check that the points remain within [0, 1]
     assert points.min() >= 0, points.min()
     assert points.max() <= 1, points.max()
-    
+
     return image, points
 
 
@@ -142,7 +175,7 @@ class Compose:
 
 class RandomHorizontalFlip(T.RandomHorizontalFlip):
     def forward(
-        self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
+            self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
     ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
         if torch.rand(1) < self.p:
             image = F.hflip(image)
@@ -160,7 +193,7 @@ class RandomHorizontalFlip(T.RandomHorizontalFlip):
 
 class PILToTensor(nn.Module):
     def forward(
-        self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
+            self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
     ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
         image = F.pil_to_tensor(image)
         return image, target
@@ -172,7 +205,7 @@ class ConvertImageDtype(nn.Module):
         self.dtype = dtype
 
     def forward(
-        self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
+            self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
     ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
         image = F.convert_image_dtype(image, self.dtype)
         return image, target
@@ -180,13 +213,13 @@ class ConvertImageDtype(nn.Module):
 
 class RandomIoUCrop(nn.Module):
     def __init__(
-        self,
-        min_scale: float = 0.3,
-        max_scale: float = 1.0,
-        min_aspect_ratio: float = 0.5,
-        max_aspect_ratio: float = 2.0,
-        sampler_options: Optional[List[float]] = None,
-        trials: int = 40,
+            self,
+            min_scale: float = 0.3,
+            max_scale: float = 1.0,
+            min_aspect_ratio: float = 0.5,
+            max_aspect_ratio: float = 2.0,
+            sampler_options: Optional[List[float]] = None,
+            trials: int = 40,
     ):
         super().__init__()
         # Configuration similar to https://github.com/weiliu89/caffe/blob/ssd/examples/ssd/ssd_coco.py#L89-L174
@@ -200,7 +233,7 @@ class RandomIoUCrop(nn.Module):
         self.trials = trials
 
     def forward(
-        self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
+            self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
     ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
         if target is None:
             raise ValueError("The targets can't be None for this transform.")
@@ -267,7 +300,7 @@ class RandomIoUCrop(nn.Module):
 
 class RandomZoomOut(nn.Module):
     def __init__(
-        self, fill: Optional[List[float]] = None, side_range: Tuple[float, float] = (1.0, 4.0), p: float = 0.5
+            self, fill: Optional[List[float]] = None, side_range: Tuple[float, float] = (1.0, 4.0), p: float = 0.5
     ):
         super().__init__()
         if fill is None:
@@ -285,7 +318,7 @@ class RandomZoomOut(nn.Module):
         return tuple(int(x) for x in self.fill) if is_pil else 0
 
     def forward(
-        self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
+            self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
     ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
         if isinstance(image, torch.Tensor):
             if image.ndimension() not in {2, 3}:
@@ -317,9 +350,9 @@ class RandomZoomOut(nn.Module):
         if isinstance(image, torch.Tensor):
             # PyTorch's pad supports only integers on fill. So we need to overwrite the colour
             v = torch.tensor(self.fill, device=image.device, dtype=image.dtype).view(-1, 1, 1)
-            image[..., :top, :] = image[..., :, :left] = image[..., (top + orig_h) :, :] = image[
-                ..., :, (left + orig_w) :
-            ] = v
+            image[..., :top, :] = image[..., :, :left] = image[..., (top + orig_h):, :] = image[
+                                                                                          ..., :, (left + orig_w):
+                                                                                          ] = v
 
         if target is not None:
             target["boxes"][:, 0::2] += left
@@ -330,12 +363,12 @@ class RandomZoomOut(nn.Module):
 
 class RandomPhotometricDistort(nn.Module):
     def __init__(
-        self,
-        contrast: Tuple[float, float] = (0.5, 1.5),
-        saturation: Tuple[float, float] = (0.5, 1.5),
-        hue: Tuple[float, float] = (-0.05, 0.05),
-        brightness: Tuple[float, float] = (0.875, 1.125),
-        p: float = 0.5,
+            self,
+            contrast: Tuple[float, float] = (0.5, 1.5),
+            saturation: Tuple[float, float] = (0.5, 1.5),
+            hue: Tuple[float, float] = (-0.05, 0.05),
+            brightness: Tuple[float, float] = (0.875, 1.125),
+            p: float = 0.5,
     ):
         super().__init__()
         self._brightness = T.ColorJitter(brightness=brightness)
@@ -345,7 +378,7 @@ class RandomPhotometricDistort(nn.Module):
         self.p = p
 
     def forward(
-        self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
+            self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
     ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
         if isinstance(image, torch.Tensor):
             if image.ndimension() not in {2, 3}:
@@ -402,10 +435,10 @@ class ScaleJitter(nn.Module):
     """
 
     def __init__(
-        self,
-        target_size: Tuple[int, int],
-        scale_range: Tuple[float, float] = (0.1, 2.0),
-        interpolation: InterpolationMode = InterpolationMode.BILINEAR,
+            self,
+            target_size: Tuple[int, int],
+            scale_range: Tuple[float, float] = (0.1, 2.0),
+            interpolation: InterpolationMode = InterpolationMode.BILINEAR,
     ):
         super().__init__()
         self.target_size = target_size
@@ -413,7 +446,7 @@ class ScaleJitter(nn.Module):
         self.interpolation = interpolation
 
     def forward(
-        self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
+            self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
     ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
         if isinstance(image, torch.Tensor):
             if image.ndimension() not in {2, 3}:
@@ -518,10 +551,10 @@ class FixedSizeCrop(nn.Module):
 
 class RandomShortestSize(nn.Module):
     def __init__(
-        self,
-        min_size: Union[List[int], Tuple[int], int],
-        max_size: int,
-        interpolation: InterpolationMode = InterpolationMode.BILINEAR,
+            self,
+            min_size: Union[List[int], Tuple[int], int],
+            max_size: int,
+            interpolation: InterpolationMode = InterpolationMode.BILINEAR,
     ):
         super().__init__()
         self.min_size = [min_size] if isinstance(min_size, int) else list(min_size)
@@ -529,7 +562,7 @@ class RandomShortestSize(nn.Module):
         self.interpolation = interpolation
 
     def forward(
-        self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
+            self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
     ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
         _, orig_height, orig_width = F.get_dimensions(image)
 
@@ -553,14 +586,13 @@ class RandomShortestSize(nn.Module):
 
 
 def _copy_paste(
-    image: torch.Tensor,
-    target: Dict[str, Tensor],
-    paste_image: torch.Tensor,
-    paste_target: Dict[str, Tensor],
-    blending: bool = True,
-    resize_interpolation: F.InterpolationMode = F.InterpolationMode.BILINEAR,
+        image: torch.Tensor,
+        target: Dict[str, Tensor],
+        paste_image: torch.Tensor,
+        paste_target: Dict[str, Tensor],
+        blending: bool = True,
+        resize_interpolation: F.InterpolationMode = F.InterpolationMode.BILINEAR,
 ) -> Tuple[torch.Tensor, Dict[str, Tensor]]:
-
     # Random paste targets selection:
     num_masks = len(paste_target["masks"])
 
@@ -660,7 +692,7 @@ class SimpleCopyPaste(torch.nn.Module):
         self.blending = blending
 
     def forward(
-        self, images: List[torch.Tensor], targets: List[Dict[str, Tensor]]
+            self, images: List[torch.Tensor], targets: List[Dict[str, Tensor]]
     ) -> Tuple[List[torch.Tensor], List[Dict[str, Tensor]]]:
         torch._assert(
             isinstance(images, (list, tuple)) and all([isinstance(v, torch.Tensor) for v in images]),
