@@ -39,12 +39,12 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
             loss_dict = model(res_images, targets)
             losses = sum(loss for loss in loss_dict.values())
 
-        i = 0
-        for image, target in zip(res_images, targets):
-            if i == 3:
-                break
-            i += 1
-            visualize.plot_img_bbox(image, target)
+        # i = 0
+        # for image, target in zip(res_images, targets):
+        #     if i == 3:
+        #         break
+        #     i += 1
+        #     visualize.plot_img_bbox(image, target)
 
         # reduce losses over all GPUs for logging purposes
         loss_dict_reduced = utils.reduce_dict(loss_dict)
@@ -145,32 +145,41 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     model = model.to(device)
 
     # construct an optimizer
+    # params = [p for p in model.parameters() if p.requires_grad]
+    # optimizer = torch.optim.AdamW(params, lr=lr)
+    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
+    # construct an optimizer
     params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = torch.optim.AdamW(params, lr=lr)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
-    epochs = 1
+    optimizer = torch.optim.SGD(params, lr=0.005,
+                                momentum=0.9, weight_decay=0.0005)
+
+    # and a learning rate scheduler which decreases the learning rate by
+    # 10x every 3 epochs
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
+                                                   step_size=3,
+                                                   gamma=0.1)
     # train
     for epoch in range(1, epochs + 1):
         # train for one epoch
         print("*********** training step ***********")
         train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10)
-        scheduler.step()
+        lr_scheduler.step()
 
-        # evaluate on the valid dataset
-    #     print("*********** evaluation step ***********")
-    #     evaluate(model, valid_ds, res, device)
-    #
-    #     # save weights
-    #     model_dir = f'./{model_dir}'
-    #     if not os.path.exists(model_dir):
-    #         os.makedirs(model_dir)
-    #     torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
-    #
-    # # test model on test dataset
-    # print("*********** testing step ***********")
-    # evaluate(model, test_ds, res, device)
+        #evaluate on the valid dataset
+        print("*********** evaluation step ***********")
+        evaluate(model, valid_ds, res, device)
+
+        # save weights
+        model_dir = f'./{model_dir}'
+        if not os.path.exists(model_dir):
+            os.makedirs(model_dir)
+        torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
+
+    # test model on test dataset
+    print("*********** testing step ***********")
+    evaluate(model, test_ds, res, device)
     # with open(f'{model_dir}/test_logs.json', 'w') as f:
     #     json.dump({'loss': test_loss, 'accuracy': test_accuracy}, f)
 
-    # delete model from memory
+    #delete model from memory
     del model
