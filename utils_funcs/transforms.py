@@ -85,12 +85,11 @@ def get_transform(train):
 
 
 def augment(images, targets):
-    new_images, new_targets = list(images), list(targets)
+    new_images, new_targets = images, targets
     i = 0
+    print("images : ", new_images)
     transforms = get_transform(True)
-    print("targets : ", targets)
     for img, target in zip(images, targets):
-        print("target : ", target)
         sample = transforms(image=img,
                             bboxes=target['boxes'],
                             labels=target['labels'])
@@ -147,8 +146,6 @@ def random_image_rotation(image, points, max_angle=30.0):
 
 
 from typing import Dict, List, Optional, Tuple, Union
-
-import torch
 import torchvision
 from torch import nn, Tensor
 from torchvision import ops
