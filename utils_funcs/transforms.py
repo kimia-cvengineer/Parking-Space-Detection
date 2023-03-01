@@ -35,9 +35,6 @@ def preprocess(images, rois=None, device=None, res=None):
         if res is not None and rois is not None:
             res_rois.append(new_rois)
         res_images.append(image)
-    # res_rois = torch.as_tensor(res_rois, dtype=torch.float32)
-    print("res_rois shape: ", len(res_rois), len(res_rois[0]))
-    print("res_img shape: ", len(res_images), len(res_images[0]))
 
     return res_images, res_rois
 

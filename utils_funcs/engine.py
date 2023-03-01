@@ -30,7 +30,7 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device, res=resolution)
         # update boxed according to the new resolution
         new_target = []
-        for idx, target in targets:
+        for idx, target in enumerate(targets):
             if resolution is not None:
                 target["boxes"] = res_rois[idx]["boxes"]
             new_target.append({k: v.to(device) for k, v in target.items()})
@@ -98,10 +98,8 @@ def evaluate(model, data_loader, resolution, device):
         res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device, res=resolution)
         # update boxed according to the new resolution
         if resolution is not None:
-            new_target = []
-            for idx, target in targets:
+            for idx, target in enumerate(targets):
                 target["boxes"] = res_rois[idx]["boxes"]
-            targets = new_target
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
