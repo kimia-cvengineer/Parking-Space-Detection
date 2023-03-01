@@ -7,7 +7,7 @@ def preprocess(images, rois=None, device=None, res=None):
     """
     Resizes, normalizes, and converts image and its corresponding rois to float32.
     """
-    res_images = []
+    res_images, res_rois = [], None
     for image in images:
         # resize image to model input size
         if res is not None:
