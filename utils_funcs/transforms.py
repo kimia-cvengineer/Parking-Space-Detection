@@ -85,11 +85,12 @@ def get_transform(train):
 
 
 def augment(images, targets):
-    new_images, new_targets = images, targets
+    new_images, new_targets = list(images), list(targets)
     i = 0
-    print("images : ", new_images)
+    print("targets : ", new_targets)
     transforms = get_transform(True)
     for img, target in zip(images, targets):
+        print("target : ", target)
         sample = transforms(image=img,
                             bboxes=target['boxes'],
                             labels=target['labels'])
