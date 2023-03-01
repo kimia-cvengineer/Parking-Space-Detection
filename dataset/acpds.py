@@ -98,7 +98,7 @@ def create_datasets(dataset_path, *args, **kwargs):
     ds_valid = ACPDS(dataset_path, 'valid', *args, **kwargs)
     ds_test = ACPDS(dataset_path, 'test', *args, **kwargs)
 
-    data_loader_train = DataLoader(ds_train, batch_size=1, shuffle=True, num_workers=4, collate_fn=utils.collate_fn)
-    data_loader_valid = DataLoader(ds_valid, batch_size=1, shuffle=False, num_workers=4, collate_fn=utils.collate_fn)
-    data_loader_test = DataLoader(ds_test, batch_size=1, shuffle=False, num_workers=4, collate_fn=utils.collate_fn)
+    data_loader_train = DataLoader(ds_train, batch_size=10, shuffle=True, num_workers=4, collate_fn=utils.collate_fn)
+    data_loader_valid = DataLoader(ds_valid, batch_size=10, shuffle=False, num_workers=4, collate_fn=utils.collate_fn)
+    data_loader_test = DataLoader(ds_test, batch_size=10, shuffle=False, num_workers=4, collate_fn=utils.collate_fn)
     return data_loader_train, data_loader_valid, data_loader_test
