@@ -73,7 +73,7 @@ def prev_augment(images, rois):
 
 # Send train=True for training transforms and False for val/test transforms
 def get_transform(train):
-    torch.manual_seed(17)
+    # torch.manual_seed(17)
     if train:
         return Compose([
             RandomHorizontalFlip(),
