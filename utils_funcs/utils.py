@@ -203,7 +203,7 @@ class MetricLogger:
             end = time.time()
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-        total_time_log = f"{header} Total time: {total_time_str} ({total_time / len(iterable):.4f} s / it)"
+        total_time_log = f"{header} Total time: {total_time_str} ({total_time / len(iterable):.4f} s / it) \n"
         print(total_time_log)
         with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
             f.write(total_time_log)
