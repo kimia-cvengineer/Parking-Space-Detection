@@ -42,12 +42,12 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
             loss_dict = model(res_images, targets)
             losses = sum(loss for loss in loss_dict.values())
 
-        i = 0
-        for image, target in zip(res_images, targets):
-            if i == 3:
-                break
-            i += 1
-            visualize.plot_img_bbox(image, target)
+        # i = 0
+        # for image, target in zip(res_images, targets):
+        #     if i == 3:
+        #         break
+        #     i += 1
+        #     visualize.plot_img_bbox(image, target)
 
         # reduce losses over all GPUs for logging purposes
         loss_dict_reduced = utils.reduce_dict(loss_dict)
