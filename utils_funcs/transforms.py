@@ -77,12 +77,14 @@ def get_transform(train):
     if train:
         return Compose([
             RandomHorizontalFlip(),
+            RandomPhotometricDistort(),
+            T.RandomRotation(degrees=(-30, 30))
             # ToTensorV2 converts image to pytorch tensor without div by 255
             # ToTensorV2(p=1.0)
         ])
     else:
         return Compose([
-            ToTensorV2(p=1.0)
+            # ToTensorV2(p=1.0)
         ])
 
 
