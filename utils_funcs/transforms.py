@@ -229,12 +229,12 @@ class MultiRandomRotation(T.RandomRotation):
         # move points to an absolute coordinate system with [0, 0] as the center of the image
         # points = target['boxes'].clone()
         # points -= 0.5
-        boxes[..., 0] -= w/2
-        boxes[..., 1] -= h/2
+        # boxes[..., 0] -= w/2
+        # boxes[..., 1] -= h/2
         # rotate the points
         boxes = boxes @ R
-        boxes[..., 0] += w/2
-        boxes[..., 1] += h/2
+        # boxes[..., 0] += w/2
+        # boxes[..., 1] += h/2
 
         boxes = boxes.reshape(-1, 4)
         target["boxes"] = boxes
