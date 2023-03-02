@@ -60,19 +60,18 @@ class CocoEvaluator:
     def save_summary(self, coco_eval, log_dir):
         p = coco_eval.params
         stats = coco_eval.stats
-        summaries_str = []
-        summaries_str[0] = self.get_formatted_log(coco_eval, stats[0], 1)
-        summaries_str[1] = self.get_formatted_log(coco_eval, stats[1], 1, iouThr=.5, maxDets=p.maxDets[2])
-        summaries_str[2] = self.get_formatted_log(coco_eval, stats[2], 1, iouThr=.75, maxDets=p.maxDets[2])
-        summaries_str[3] = self.get_formatted_log(coco_eval, stats[3], 1, areaRng='small', maxDets=p.maxDets[2])
-        summaries_str[4] = self.get_formatted_log(coco_eval, stats[4], 1, areaRng='medium', maxDets=p.maxDets[2])
-        summaries_str[5] = self.get_formatted_log(coco_eval, stats[5], 1, areaRng='large', maxDets=p.maxDets[2])
-        summaries_str[6] = self.get_formatted_log(coco_eval, stats[6], 0, maxDets=p.maxDets[0])
-        summaries_str[7] = self.get_formatted_log(coco_eval, stats[7], 0, maxDets=p.maxDets[1])
-        summaries_str[8] = self.get_formatted_log(coco_eval, stats[8], 0, maxDets=p.maxDets[2])
-        summaries_str[9] = self.get_formatted_log(coco_eval, stats[9], 0, areaRng='small', maxDets=p.maxDets[2])
-        summaries_str[10] = self.get_formatted_log(coco_eval, stats[10], 0, areaRng='medium', maxDets=p.maxDets[2])
-        summaries_str[11] = self.get_formatted_log(coco_eval, stats[11], 0, areaRng='large', maxDets=p.maxDets[2])
+        summaries_str = [self.get_formatted_log(coco_eval, stats[0], 1),
+                         self.get_formatted_log(coco_eval, stats[1], 1, iouThr=.5, maxDets=p.maxDets[2]),
+                         self.get_formatted_log(coco_eval, stats[2], 1, iouThr=.75, maxDets=p.maxDets[2]),
+                         self.get_formatted_log(coco_eval, stats[3], 1, areaRng='small', maxDets=p.maxDets[2]),
+                         self.get_formatted_log(coco_eval, stats[4], 1, areaRng='medium', maxDets=p.maxDets[2]),
+                         self.get_formatted_log(coco_eval, stats[5], 1, areaRng='large', maxDets=p.maxDets[2]),
+                         self.get_formatted_log(coco_eval, stats[6], 0, maxDets=p.maxDets[0]),
+                         self.get_formatted_log(coco_eval, stats[7], 0, maxDets=p.maxDets[1]),
+                         self.get_formatted_log(coco_eval, stats[8], 0, maxDets=p.maxDets[2]),
+                         self.get_formatted_log(coco_eval, stats[9], 0, areaRng='small', maxDets=p.maxDets[2]),
+                         self.get_formatted_log(coco_eval, stats[10], 0, areaRng='medium', maxDets=p.maxDets[2]),
+                         self.get_formatted_log(coco_eval, stats[11], 0, areaRng='large', maxDets=p.maxDets[2])]
 
         with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
             for summary_str in summaries_str:
