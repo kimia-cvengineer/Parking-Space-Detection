@@ -212,21 +212,24 @@ class ConvertImageDtype(nn.Module):
         return image, target
 
 
-# def my_rotation(image, bonding_box_coordinate):
-#     if random.random() > 0.5:
-#         angle = random.randint(-30, 30)
-#         image = TF.rotate(image, angle)
-#         bonding_box_coordinate = TF.rotate(bonding_box_coordinate, angle)
-#     # more transforms ...
-#     return image, bonding_box_coordinate
-
 class MultiRandomRotation(T.RandomRotation):
     def __call__(self, img, target):
         angle = self.get_params(self.degrees)
         img = TF.rotate(img, angle)
         print("target['boxes'] : ", target['boxes'])
         print("target['boxes'] : ", target['boxes'].shape)
-        target["boxes"] = torch.tensor(TF.rotate(target['boxes'], angle))
+        # target["boxes"] = torch.tensor(TF.rotate(target['boxes'], angle))
+        # create rotation matrix
+        angle_rad = torch.tensor((angle / 180.0) * 3.141592)
+        R = torch.tensor([[torch.cos(angle_rad), -torch.sin(angle_rad)],
+                          [torch.sin(angle_rad), torch.cos(angle_rad)]], dtype=torch.float, device=device)
+
+        # move points to an absolute cooridnate system with [0, 0] as the center of the image
+        # points = target['boxes'].clone()
+        # points -= 0.5
+
+        # rotate the points
+        target['boxes'] = target['boxes'] @ R
         return img, target
 
 
