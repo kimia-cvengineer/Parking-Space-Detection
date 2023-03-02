@@ -75,13 +75,13 @@ def prev_augment(images, rois):
 def get_transform(train):
     torch.manual_seed(17)
     if train:
-        return A.Compose([
+        return Compose([
             RandomHorizontalFlip(),
             # ToTensorV2 converts image to pytorch tensor without div by 255
             ToTensorV2(p=1.0)
         ])
     else:
-        return A.Compose([
+        return Compose([
             ToTensorV2(p=1.0)
         ])
 
@@ -93,12 +93,8 @@ def augment(images, targets):
     for img, target in zip(images, targets):
         if not isinstance(img, numpy.ndarray):
             img = img.permute(1, 2, 0).numpy()
-        sample = transforms(image=img,
+        new_images[i], new_targets[i] = transforms(image=img,
                             target=target)
-        print("sample : ", sample)
-
-        new_images[i] = sample['image']
-        new_targets[i]['boxes'] = torch.Tensor(sample['bboxes'])
         i += 1
     return new_images, new_targets
 
