@@ -5,6 +5,7 @@ import torchvision.transforms.functional as TF
 
 # for image augmentations
 import albumentations as A
+from albumentations import rotate
 from albumentations.pytorch.transforms import ToTensorV2
 
 
@@ -78,7 +79,7 @@ def get_transform(train):
         return Compose([
             RandomHorizontalFlip(),
             RandomPhotometricDistort(),
-            T.RandomRotation(degrees=(-30, 30))
+            MultiRandomRotation(30)
             # ToTensorV2 converts image to pytorch tensor without div by 255
             # ToTensorV2(p=1.0)
         ])
@@ -209,6 +210,16 @@ class ConvertImageDtype(nn.Module):
     ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
         image = F.convert_image_dtype(image, self.dtype)
         return image, target
+
+
+class MultiRandomRotation(T.RandomRotation):
+    def __call__(self, img, target):
+        angle = self.get_params(self.degrees)
+        new_img = rotate(img, angle, self.resample, self.expand,
+                         self.center, self.translate)
+        new_target = rotate(target, angle, self.resample, self.expand,
+                            self.center, self.translate)
+        return new_img, new_target
 
 
 class RandomIoUCrop(nn.Module):
