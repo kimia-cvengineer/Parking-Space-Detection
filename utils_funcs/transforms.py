@@ -75,7 +75,7 @@ def prev_augment(images, rois):
 def get_transform(train):
     if train:
         return A.Compose([
-            A.HorizontalFlip(0.5),
+            T.RandomHorizontalFlip(0.5),
             # ToTensorV2 converts image to pytorch tensor without div by 255
             ToTensorV2(p=1.0)
         ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
