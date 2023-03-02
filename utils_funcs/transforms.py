@@ -89,7 +89,6 @@ def augment(images, targets):
     new_images, new_targets = list(images), list(targets)
     i = 0
     transforms = get_transform(True)
-    print("Prev img type : ", type(images[0]))
     for img, target in zip(images, targets):
         if not isinstance(img, numpy.ndarray):
             img = img.permute(1, 2, 0).numpy()
@@ -100,7 +99,6 @@ def augment(images, targets):
         new_images[i] = sample['image']
         new_targets[i]['boxes'] = torch.Tensor(sample['bboxes'])
         i += 1
-    print("New img type : ", type(new_images[0]))
     return new_images, new_targets
 
 
