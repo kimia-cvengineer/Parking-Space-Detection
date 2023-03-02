@@ -79,11 +79,11 @@ def get_transform(train):
             RandomHorizontalFlip(),
             # ToTensorV2 converts image to pytorch tensor without div by 255
             ToTensorV2(p=1.0)
-        ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
+        ])
     else:
         return A.Compose([
             ToTensorV2(p=1.0)
-        ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
+        ])
 
 
 def augment(images, targets):
