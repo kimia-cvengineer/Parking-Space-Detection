@@ -224,7 +224,7 @@ class MultiRandomRotation(T.RandomRotation):
         R = torch.tensor([[torch.cos(angle_rad), -torch.sin(angle_rad)],
                           [torch.sin(angle_rad), torch.cos(angle_rad)]], dtype=torch.float)
         boxes = target["boxes"]
-        boxes.reshape(-1, 2, 2)
+        boxes = boxes.reshape(-1, 2, 2)
 
         # move points to an absolute coordinate system with [0, 0] as the center of the image
         # points = target['boxes'].clone()
@@ -236,7 +236,7 @@ class MultiRandomRotation(T.RandomRotation):
         boxes[..., 0] += w/2
         boxes[..., 1] += h/2
 
-        boxes.reshape(-1, 4)
+        boxes = boxes.reshape(-1, 4)
         target["boxes"] = boxes
         return img, target
 
