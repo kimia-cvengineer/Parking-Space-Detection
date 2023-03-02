@@ -60,7 +60,7 @@ class CocoEvaluator:
     def save_summary(self, coco_eval, log_dir):
         p = coco_eval.params
         stats = coco_eval.stats
-        summaries_str = np.zeros((10,))
+        summaries_str = []
         summaries_str[0] = self.get_formatted_log(coco_eval, stats[0], 1)
         summaries_str[1] = self.get_formatted_log(coco_eval, stats[1], 1, iouThr=.5, maxDets=p.maxDets[2])
         summaries_str[2] = self.get_formatted_log(coco_eval, stats[2], 1, iouThr=.75, maxDets=p.maxDets[2])
