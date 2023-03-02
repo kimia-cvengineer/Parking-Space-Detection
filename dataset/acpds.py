@@ -92,7 +92,7 @@ def collate_fn(batch):
     return [images, rois, occupancy]
 
 
-def create_datasets(dataset_path, *args, **kwargs):
+def create_datasets(dataset_path, batch_size, *args, **kwargs):
     """
     Create training and test DataLoaders.
     Returns the tuple (image, rois, occupancy).
@@ -102,7 +102,7 @@ def create_datasets(dataset_path, *args, **kwargs):
     ds_valid = ACPDS(dataset_path, 'valid', *args, **kwargs)
     ds_test = ACPDS(dataset_path, 'test', *args, **kwargs)
 
-    data_loader_train = DataLoader(ds_train, batch_size=10, shuffle=True, num_workers=4, collate_fn=utils.collate_fn)
-    data_loader_valid = DataLoader(ds_valid, batch_size=10, shuffle=False, num_workers=4, collate_fn=utils.collate_fn)
-    data_loader_test = DataLoader(ds_test, batch_size=10, shuffle=False, num_workers=4, collate_fn=utils.collate_fn)
+    data_loader_train = DataLoader(ds_train, batch_size=batch_size, shuffle=True, collate_fn=utils.collate_fn)
+    data_loader_valid = DataLoader(ds_valid, batch_size=batch_size, shuffle=False, collate_fn=utils.collate_fn)
+    data_loader_test = DataLoader(ds_test, batch_size=batch_size, shuffle=False, collate_fn=utils.collate_fn)
     return data_loader_train, data_loader_valid, data_loader_test
