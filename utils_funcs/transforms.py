@@ -91,8 +91,8 @@ def augment(images, targets):
     i = 0
     transforms = get_transform(True)
     for img, target in zip(images, targets):
-    #     if not isinstance(img, numpy.ndarray):
-    #         img = img.permute(1, 2, 0).numpy()
+        if not isinstance(img, numpy.ndarray):
+            img = img.permute(1, 2, 0).numpy()
         sample = transforms(image=img,
                             target=target)
         print("sample : ", sample)
