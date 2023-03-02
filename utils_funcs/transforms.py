@@ -223,10 +223,8 @@ class ConvertImageDtype(nn.Module):
 class MultiRandomRotation(T.RandomRotation):
     def __call__(self, img, target):
         angle = self.get_params(self.degrees)
-        new_img = rotate(img, angle, self.interpolation, self.expand,
-                         self.center)
-        new_target = rotate(target, angle, self.interpolation, self.expand,
-                            self.center)
+        new_img = TF.rotate(img, angle)
+        new_target = rotate(target, angle)
         return new_img, new_target
 
 
