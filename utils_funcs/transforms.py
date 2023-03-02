@@ -78,7 +78,7 @@ def get_transform(train):
         return Compose([
             RandomHorizontalFlip(),
             # ToTensorV2 converts image to pytorch tensor without div by 255
-            ToTensorV2(p=1.0)
+            # ToTensorV2(p=1.0)
         ])
     else:
         return Compose([
@@ -93,7 +93,7 @@ def augment(images, targets):
     for img, target in zip(images, targets):
         # if not isinstance(img, numpy.ndarray):
         #     img = img.permute(1, 2, 0).numpy()
-        new_images[i], new_targets[i] = transforms(image=numpy.array(img),
+        new_images[i], new_targets[i] = transforms(image=img,
                                                    target=target)
         i += 1
     return new_images, new_targets
