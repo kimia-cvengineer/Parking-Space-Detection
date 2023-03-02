@@ -142,7 +142,7 @@ class MetricLogger:
     def add_meter(self, name, meter):
         self.meters[name] = meter
 
-    def log_every(self, iterable, print_freq, header=None):
+    def log_every(self, iterable, print_freq, log_dir, header=None):
         i = 0
         if not header:
             header = ""
@@ -176,8 +176,7 @@ class MetricLogger:
                 eta_seconds = iter_time.global_avg * (len(iterable) - i)
                 eta_string = str(datetime.timedelta(seconds=int(eta_seconds)))
                 if torch.cuda.is_available():
-                    print(
-                        log_msg.format(
+                    formatted_log = log_msg.format(
                             i,
                             len(iterable),
                             eta=eta_string,
@@ -186,18 +185,28 @@ class MetricLogger:
                             data=str(data_time),
                             memory=torch.cuda.max_memory_allocated() / MB,
                         )
+                    print(
+                        formatted_log
                     )
                 else:
+                    formatted_log = log_msg.format(
+                            i, len(iterable), eta=eta_string, meters=str(self), time=str(iter_time), data=str(data_time))
+
                     print(
-                        log_msg.format(
-                            i, len(iterable), eta=eta_string, meters=str(self), time=str(iter_time), data=str(data_time)
+                        formatted_log
                         )
-                    )
+
+            with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
+                f.write(formatted_log + '\n')
+
             i += 1
             end = time.time()
         total_time = time.time() - start_time
         total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-        print(f"{header} Total time: {total_time_str} ({total_time / len(iterable):.4f} s / it)")
+        total_time_log = f"{header} Total time: {total_time_str} ({total_time / len(iterable):.4f} s / it)"
+        print(total_time_log)
+        with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
+            f.write(total_time_log)
 
 
 def collate_fn(batch):

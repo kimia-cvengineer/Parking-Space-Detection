@@ -12,7 +12,7 @@ from utils_funcs.coco_utils import get_coco_api_from_dataset
 from utils_funcs import utils, transforms, visualize
 
 
-def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, print_freq, scaler=None):
+def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, print_freq, log_dir, scaler=None):
     model.train()
     metric_logger = utils.MetricLogger(delimiter="  ")
     metric_logger.add_meter("lr", utils.SmoothedValue(window_size=1, fmt="{value:.6f}"))
@@ -25,9 +25,9 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         lr_scheduler = torch.optim.lr_scheduler.LinearLR(
             optimizer, start_factor=warmup_factor, total_iters=warmup_iters
         )
-    for images, targets in metric_logger.log_every(data_loader, print_freq, header):
+    for images, targets in metric_logger.log_every(data_loader, print_freq, log_dir, header):
         # augment data
-        # images, targets = transforms.augment(images, targets)
+        images, targets = transforms.augment(images, targets)
 
         # preprocess image
         res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device, res=resolution)
@@ -91,7 +91,7 @@ def _get_iou_types(model):
 
 
 @torch.inference_mode()
-def evaluate(model, data_loader, resolution, device):
+def evaluate(model, data_loader, resolution, log_dir, device):
     n_threads = torch.get_num_threads()
     # FIXME remove this and make paste_masks_in_image run on the GPU
     torch.set_num_threads(1)
@@ -103,7 +103,7 @@ def evaluate(model, data_loader, resolution, device):
     coco = get_coco_api_from_dataset(data_loader.dataset)
     iou_types = _get_iou_types(model)
     coco_evaluator = CocoEvaluator(coco, iou_types)
-    for images, targets in metric_logger.log_every(data_loader, 10, header):
+    for images, targets in metric_logger.log_every(data_loader, 10, log_dir, header):
         # preprocess image
         res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device, res=resolution)
         # update boxed according to the new resolution
@@ -127,12 +127,18 @@ def evaluate(model, data_loader, resolution, device):
 
     # gather the stats from all processes
     metric_logger.synchronize_between_processes()
-    print("Averaged stats:", metric_logger)
+    avg_stats_str = f"Averaged stats: {metric_logger}"
+    print(avg_stats_str)
+    with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
+        f.write(avg_stats_str + '\n')
     coco_evaluator.synchronize_between_processes()
 
     # accumulate predictions from all images
     coco_evaluator.accumulate()
-    coco_evaluator.summarize()
+    result = coco_evaluator.summarize()
+    print("Stats result:", result)
+    # with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
+    #     f.write(avg_stats_str + '\n')
     torch.set_num_threads(n_threads)
     return coco_evaluator
 
@@ -146,34 +152,33 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     """
     # transfer model to device
     model = model.to(device)
-
-    # construct an optimizer
-    params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = torch.optim.AdamW(params, lr=lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
-    # construct an optimizer
+    model_dir = f'./{model_dir}'
+    # construct an Adam optimizer
     # params = [p for p in model.parameters() if p.requires_grad]
-    # optimizer = torch.optim.SGD(params, lr=0.005,
-    #                             momentum=0.9, weight_decay=0.0005)
+    # optimizer = torch.optim.AdamW(params, lr=lr)
+    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
+    # construct an SGD optimizer
+    params = [p for p in model.parameters() if p.requires_grad]
+    optimizer = torch.optim.SGD(params, lr=0.005,
+                                momentum=0.9, weight_decay=0.0005)
 
     # and a learning rate scheduler which decreases the learning rate by
     # 10x every 3 epochs
-    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
-    #                                                step_size=3,
-    #                                                gamma=0.1)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
+                                                   step_size=3,
+                                                   gamma=0.1)
     # train
     for epoch in range(1, epochs + 1):
         # train for one epoch
         print("*********** training step ***********")
-        train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10)
+        train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10, log_dir=model_dir)
         lr_scheduler.step()
 
         # evaluate on the valid dataset
         print("*********** evaluation step ***********")
-        evaluate(model, valid_ds, res, device)
+        evaluate(model, valid_ds, res, model_dir,device)
 
         # save weights
-        model_dir = f'./{model_dir}'
         if not os.path.exists(model_dir):
             os.makedirs(model_dir)
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
