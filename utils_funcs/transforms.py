@@ -73,9 +73,10 @@ def prev_augment(images, rois):
 
 # Send train=True for training transforms and False for val/test transforms
 def get_transform(train):
+    torch.manual_seed(17)
     if train:
         return A.Compose([
-            T.RandomHorizontalFlip(0.5),
+            RandomHorizontalFlip(),
             # ToTensorV2 converts image to pytorch tensor without div by 255
             ToTensorV2(p=1.0)
         ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
@@ -93,8 +94,8 @@ def augment(images, targets):
         if not isinstance(img, numpy.ndarray):
             img = img.permute(1, 2, 0).numpy()
         sample = transforms(image=img,
-                            bboxes=target['boxes'],
-                            labels=target['labels'])
+                            target=target)
+        print("sample : ", sample)
 
         new_images[i] = sample['image']
         new_targets[i]['boxes'] = torch.Tensor(sample['bboxes'])
