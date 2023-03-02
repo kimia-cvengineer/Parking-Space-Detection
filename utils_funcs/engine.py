@@ -135,8 +135,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
 
     # accumulate predictions from all images
     coco_evaluator.accumulate()
-    result = coco_evaluator.summarize()
-    print("Stats result:", result)
+    coco_evaluator.summarize(log_dir)
     # with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
     #     f.write(avg_stats_str + '\n')
     torch.set_num_threads(n_threads)
@@ -170,11 +169,15 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     # train
     for epoch in range(1, epochs + 1):
         # train for one epoch
+        with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
+            f.write("*********** training step ***********" + '\n')
         print("*********** training step ***********")
         train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10, log_dir=model_dir)
         lr_scheduler.step()
 
         # evaluate on the valid dataset
+        with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
+            f.write("*********** evaluation step ***********" + '\n')
         print("*********** evaluation step ***********")
         evaluate(model, valid_ds, res, model_dir,device)
 
@@ -184,6 +187,8 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
     # test model on test dataset
+    with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
+        f.write("*********** testing step ***********" + '\n')
     print("*********** testing step ***********")
     evaluate(model, test_ds, res, device)
     # with open(f'{model_dir}/test_logs.json', 'w') as f:
