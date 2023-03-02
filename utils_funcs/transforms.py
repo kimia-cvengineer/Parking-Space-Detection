@@ -224,8 +224,9 @@ class MultiRandomRotation(T.RandomRotation):
     def __call__(self, img, target):
         angle = self.get_params(self.degrees)
         img = TF.rotate(img, angle)
-        print("target['boxes'] : ", target["boxes"])
-        target["boxes"] = torch.tensor(TF.rotate(target["boxes"], angle))
+        print("target['boxes'] : ", numpy.array(target["boxes"]))
+        print("target['boxes'] : ", numpy.array(target["boxes"]).shape)
+        target["boxes"] = torch.tensor(TF.rotate(numpy.array(target["boxes"]), angle))
         return img, target
 
 
