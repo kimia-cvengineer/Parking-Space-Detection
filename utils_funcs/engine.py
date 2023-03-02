@@ -148,19 +148,19 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     model = model.to(device)
 
     # construct an optimizer
-    # params = [p for p in model.parameters() if p.requires_grad]
-    # optimizer = torch.optim.AdamW(params, lr=lr)
-    # scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
-    # construct an optimizer
     params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = torch.optim.SGD(params, lr=0.005,
-                                momentum=0.9, weight_decay=0.0005)
+    optimizer = torch.optim.AdamW(params, lr=lr)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
+    # construct an optimizer
+    # params = [p for p in model.parameters() if p.requires_grad]
+    # optimizer = torch.optim.SGD(params, lr=0.005,
+    #                             momentum=0.9, weight_decay=0.0005)
 
     # and a learning rate scheduler which decreases the learning rate by
     # 10x every 3 epochs
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
-                                                   step_size=3,
-                                                   gamma=0.1)
+    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
+    #                                                step_size=3,
+    #                                                gamma=0.1)
     # train
     for epoch in range(1, epochs + 1):
         # train for one epoch
