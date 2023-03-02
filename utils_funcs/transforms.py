@@ -217,7 +217,6 @@ class MultiRandomRotation(T.RandomRotation):
         angle = self.get_params(self.degrees)
         img = TF.rotate(img, angle)
         _, h, w = img.shape
-        print("target['boxes'] : ", target['boxes'].shape)
         # target["boxes"] = torch.tensor(TF.rotate(target['boxes'], angle))
         # create rotation matrix
         angle_rad = torch.tensor((angle / 180.0) * 3.141592)
