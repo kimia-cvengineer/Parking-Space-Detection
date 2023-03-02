@@ -223,9 +223,9 @@ class ConvertImageDtype(nn.Module):
 class MultiRandomRotation(T.RandomRotation):
     def __call__(self, img, target):
         angle = self.get_params(self.degrees)
-        new_img = TF.rotate(img, angle)
-        new_target = rotate(target, angle)
-        return new_img, new_target
+        img = TF.rotate(img, angle)
+        target["boxes"] = rotate(target["boxes"], angle)
+        return img, target
 
 
 class RandomIoUCrop(nn.Module):
