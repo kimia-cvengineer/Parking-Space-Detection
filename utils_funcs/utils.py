@@ -196,8 +196,8 @@ class MetricLogger:
                         formatted_log
                         )
 
-            with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
-                f.write(formatted_log + '\n')
+                with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
+                    f.write(formatted_log + '\n')
 
             i += 1
             end = time.time()
