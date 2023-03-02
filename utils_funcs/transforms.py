@@ -216,7 +216,7 @@ class MultiRandomRotation(T.RandomRotation):
     def __call__(self, img, target):
         angle = self.get_params(self.degrees)
         img = TF.rotate(img, angle)
-        print("target['boxes'] : ", target['boxes'])
+        _, h, w = img.shape
         print("target['boxes'] : ", target['boxes'].shape)
         # target["boxes"] = torch.tensor(TF.rotate(target['boxes'], angle))
         # create rotation matrix
@@ -230,9 +230,12 @@ class MultiRandomRotation(T.RandomRotation):
         # move points to an absolute cooridnate system with [0, 0] as the center of the image
         # points = target['boxes'].clone()
         # points -= 0.5
-
+        target["boxes"][:, [0, 2]] -= w/2
+        target["boxes"][:, [1, 3]] -= h/2
         # rotate the points
         target['boxes'] = target['boxes'] @ R
+        target["boxes"][:, [0, 2]] += w/2
+        target["boxes"][:, [1, 3]] += h/2
         return img, target
 
 
