@@ -212,13 +212,21 @@ class ConvertImageDtype(nn.Module):
         return image, target
 
 
+# def my_rotation(image, bonding_box_coordinate):
+#     if random.random() > 0.5:
+#         angle = random.randint(-30, 30)
+#         image = TF.rotate(image, angle)
+#         bonding_box_coordinate = TF.rotate(bonding_box_coordinate, angle)
+#     # more transforms ...
+#     return image, bonding_box_coordinate
+
 class MultiRandomRotation(T.RandomRotation):
     def __call__(self, img, target):
         angle = self.get_params(self.degrees)
-        new_img = rotate(img, angle, self.resample, self.expand,
-                         self.center, self.translate)
-        new_target = rotate(target, angle, self.resample, self.expand,
-                            self.center, self.translate)
+        new_img = rotate(img, angle, self.interpolation, self.expand,
+                         self.center)
+        new_target = rotate(target, angle, self.interpolation, self.expand,
+                            self.center)
         return new_img, new_target
 
 
