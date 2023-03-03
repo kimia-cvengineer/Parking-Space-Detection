@@ -180,7 +180,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
         metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10, log_dir=model_dir)
         # lr_scheduler.step()
         print(str(metric_logger))
-        print("losses : ", str(metric_logger.meters["loss"]))
+        print("losses : ", str(metric_logger.meters["loss"]).split(" ")[0])
 
         # evaluate on the valid dataset
         with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
