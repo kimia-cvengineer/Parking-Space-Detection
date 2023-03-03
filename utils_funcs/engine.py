@@ -144,7 +144,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     return coco_evaluator
 
 
-def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, epochs=30, lr_decay=50, res=None,
+def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, epochs=30, lr_decay=50, res=None,
                 verbose=False):
     """
     Trains any model which takes (image, rois) and outputs class_logits.
@@ -178,31 +178,51 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     # train
     for epoch in range(1, epochs + 1):
         # train for one epoch
-        with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
-            f.write("*********** training step ***********" + '\n')
+
+        # if this is the first epoch
+        if epoch == 1:
+            # ensure (an empty) model dir exists
+            shutil.rmtree(model_dir, ignore_errors=True)
+            os.makedirs(model_dir, exist_ok=False)
+            with open(f'{model_dir}/logs.txt', 'w', newline='\n', encoding='utf-8') as f:
+                f.write("*********** training step ***********" + '\n')
+
+            # create log header
+            # with open(f'{model_dir}/train_losses.csv', 'w', newline='\n', encoding='utf-8') as f:
+            #     f.write('train_loss,train_accuracy,valid_loss,valid_accuracy\n')
+
         print("*********** training step ***********")
         metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10,
                                         log_dir=model_dir)
         # lr_scheduler.step()
-        losses.append(get_metric_loss(metric_logger))
+        print("########### losses ############", get_metric_epoch_losses(metric_logger))
+        losses.append(get_metric_epoch_losses(metric_logger))
 
         # evaluate on the valid dataset
         with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
             f.write("*********** evaluation step ***********" + '\n')
+
         print("*********** evaluation step ***********")
         evaluate(model, valid_ds, res, model_dir, device)
 
         # save weights
-        if not os.path.exists(model_dir):
-            os.makedirs(model_dir)
+        # if not os.path.exists(model_dir):
+        #     os.makedirs(model_dir)
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
-    # Plot training losses
-    plot_losses_per_epoch(range(1, epochs + 1), losses)
+    # save epoch logs
+    with open(f'{model_dir}/train_log.csv', 'a', newline='\n', encoding='utf-8') as f:
+        f.write(f'{train_loss:.4f},{train_accuracy:.4f},{valid_loss:.4f},{valid_accuracy:.4f}\n')
 
-    # test model on test dataset
+    # Plot training losses
+    print("******** 1st loss ******** ", losses[:, 0])
+    plot_losses_per_epoch(range(1, epochs + 1), losses[:, 0])
+
+
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
+
+    # test model on test dataset
     print("*********** testing step ***********")
     evaluate(model, test_ds, res, model_dir, device)
     # with open(f'{model_dir}/test_logs.json', 'w') as f:
@@ -212,5 +232,11 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     del model
 
 
-def get_metric_loss(metric_logger):
-    return float(str(metric_logger.meters["loss"]).split(" ")[0])
+def get_metric_epoch_losses(metric_logger):
+    return [loss_str.split("")[0] for loss_str in str(metric_logger).split("\t")[0:6]]
+
+
+def save_metric_losses(log_dir, metric_logger):
+
+    with open(f'{model_dir}/test_logs.json', 'w') as f:
+        json.dump({'loss': losses, 'accuracy': test_accuracy}, f)
