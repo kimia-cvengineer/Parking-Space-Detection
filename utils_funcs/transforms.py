@@ -222,7 +222,7 @@ class MultiRandomRotation(T.RandomRotation):
         # create rotation matrix
         angle_rad = torch.tensor((angle / 180.0) * 3.141592)
         R = torch.tensor([[torch.cos(angle_rad), -torch.sin(angle_rad)],
-                          [torch.sin(angle_rad), torch.cos(angle_rad)]], dtype=torch.float, device=device)
+                          [torch.sin(angle_rad), torch.cos(angle_rad)]], dtype=torch.float, device=torch.device('gpu'))
         boxes = target["boxes"]
         boxes = boxes.reshape(-1, 2, 2)
 
