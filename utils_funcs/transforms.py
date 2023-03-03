@@ -79,7 +79,7 @@ def get_transform(train):
         return Compose([
             RandomHorizontalFlip(),
             RandomPhotometricDistort(),
-            # MultiRandomRotation(30)
+            MultiRandomRotation(30)
             # ToTensorV2 converts image to pytorch tensor without div by 255
             # ToTensorV2(p=1.0)
         ])
