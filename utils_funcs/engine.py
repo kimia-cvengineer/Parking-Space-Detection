@@ -153,13 +153,13 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     model = model.to(device)
     model_dir = f'./{model_dir}'
     # construct an Adam optimizer
-    # params = [p for p in model.parameters() if p.requires_grad]
-    # optimizer = torch.optim.AdamW(params, lr=lr)
+    params = [p for p in model.parameters() if p.requires_grad]
+    optimizer = torch.optim.AdamW(params, lr=lr)
     # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
     # construct an SGD optimizer
-    params = [p for p in model.parameters() if p.requires_grad]
-    optimizer = torch.optim.SGD(params, lr=lr,
-                                momentum=0.9, weight_decay=0.0005)
+    # params = [p for p in model.parameters() if p.requires_grad]
+    # optimizer = torch.optim.SGD(params, lr=lr,
+    #                             momentum=0.9, weight_decay=0.0005)
 
     # cosine lr shceduler
     # lr = 8e-5
