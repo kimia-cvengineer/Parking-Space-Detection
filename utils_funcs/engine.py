@@ -218,4 +218,4 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
 
 
 def get_metric_loss(metric_logger):
-    return int(str(metric_logger.meters["loss"]).split(" ")[0])
+    return float(str(metric_logger.meters["loss"]).split(" ")[0])
