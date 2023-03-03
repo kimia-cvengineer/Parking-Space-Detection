@@ -23,9 +23,9 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         warmup_factor = 1.0 / 1000
         warmup_iters = min(1000, len(data_loader) - 1)
 
-        lr_scheduler = torch.optim.lr_scheduler.LinearLR(
-            optimizer, start_factor=warmup_factor, total_iters=warmup_iters
-        )
+        # lr_scheduler = torch.optim.lr_scheduler.LinearLR(
+        #     optimizer, start_factor=warmup_factor, total_iters=warmup_iters
+        # )
     for images, targets in metric_logger.log_every(data_loader, print_freq, log_dir, header):
         # augment data
         images, targets = transforms.augment(images, targets)
@@ -131,7 +131,6 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     # gather the stats from all processes
     metric_logger.synchronize_between_processes()
     avg_stats_str = f"Averaged stats: {metric_logger}"
-    print(avg_stats_str)
     with open(f'{log_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write(avg_stats_str + '\n')
     coco_evaluator.synchronize_between_processes()
@@ -199,10 +198,6 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
     # Plot training losses
-    print("losses : ", losses)
-    print("len losses : ", len(losses))
-    print("epochs : ", range(1, epochs + 1))
-    print("len epochs : ", len([range(1, epochs + 1)]))
     plot_losses_per_epoch(range(1, epochs + 1), losses)
 
     # test model on test dataset
