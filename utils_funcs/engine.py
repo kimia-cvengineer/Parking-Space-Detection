@@ -23,9 +23,9 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         warmup_factor = 1.0 / 1000
         warmup_iters = min(1000, len(data_loader) - 1)
 
-        # lr_scheduler = torch.optim.lr_scheduler.LinearLR(
-        #     optimizer, start_factor=warmup_factor, total_iters=warmup_iters
-        # )
+        lr_scheduler = torch.optim.lr_scheduler.LinearLR(
+            optimizer, start_factor=warmup_factor, total_iters=warmup_iters
+        )
     for images, targets in metric_logger.log_every(data_loader, print_freq, log_dir, header):
         # augment data
         images, targets = transforms.augment(images, targets)
@@ -157,7 +157,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     # construct an Adam optimizer
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW(params, lr=lr)
-    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
     # construct an SGD optimizer
     # params = [p for p in model.parameters() if p.requires_grad]
     # optimizer = torch.optim.SGD(params, lr=lr,
@@ -170,9 +170,9 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
     # and a learning rate scheduler which decreases the learning rate by
     # 10x every 3 epochs
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
-                                                   step_size=3,
-                                                   gamma=0.1)
+    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
+    #                                                step_size=3,
+    #                                                gamma=0.1)
 
     losses = []
     # train
@@ -194,7 +194,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         print("*********** training step ***********")
         metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10,
                                         log_dir=model_dir)
-        # lr_scheduler.step()
+        lr_scheduler.step()
         print("########### losses ############", get_metric_epoch_losses(metric_logger))
         losses.append(get_metric_epoch_losses(metric_logger))
 
