@@ -188,8 +188,8 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
                 f.write("*********** training step ***********" + '\n')
 
             # create log header
-            # with open(f'{model_dir}/train_losses.csv', 'w', newline='\n', encoding='utf-8') as f:
-            #     f.write('train_loss,train_accuracy,valid_loss,valid_accuracy\n')
+            with open(f'{model_dir}/train_losses.csv', 'w', newline='\n', encoding='utf-8') as f:
+                f.write('loss,loss_classifier,loss_box_reg,loss_objectness,loss_rpn_box_reg\n')
 
         print("*********** training step ***********")
         metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10,
@@ -211,13 +211,11 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
     # save epoch logs
-    # with open(f'{model_dir}/train_log.csv', 'a', newline='\n', encoding='utf-8') as f:
-    #     f.write(f'{train_loss:.4f},{train_accuracy:.4f},{valid_loss:.4f},{valid_accuracy:.4f}\n')
+    save_metric_losses(f'{model_dir}/train_losses.csv', losses)
 
     # Plot training losses
     print("******** 1st loss ******** ", losses[:, 0])
     plot_losses_per_epoch(range(1, epochs + 1), losses[:, 0])
-
 
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
@@ -225,8 +223,6 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     # test model on test dataset
     print("*********** testing step ***********")
     evaluate(model, test_ds, res, model_dir, device)
-    # with open(f'{model_dir}/test_logs.json', 'w') as f:
-    #     json.dump({'loss': test_loss, 'accuracy': test_accuracy}, f)
 
     # delete model from memory
     del model
@@ -236,7 +232,8 @@ def get_metric_epoch_losses(metric_logger):
     return [loss_str.split("")[0] for loss_str in str(metric_logger).split("\t")[0:6]]
 
 
-def save_metric_losses(log_dir, metric_logger):
-
-    with open(f'{model_dir}/test_logs.json', 'w') as f:
-        json.dump({'loss': losses, 'accuracy': test_accuracy}, f)
+def save_metric_losses(log_file, metric_losses):
+    with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
+        for epoch_losses in metric_losses:
+            f.write(
+                f'{epoch_losses[0]:.4f},{epoch_losses[1]:.4f},{epoch_losses[2]:.4f},{epoch_losses[3]:.4f},{epoch_losses[4]:.4f}\n')
