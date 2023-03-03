@@ -211,8 +211,8 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
     # save epoch logs
-    with open(f'{model_dir}/train_log.csv', 'a', newline='\n', encoding='utf-8') as f:
-        f.write(f'{train_loss:.4f},{train_accuracy:.4f},{valid_loss:.4f},{valid_accuracy:.4f}\n')
+    # with open(f'{model_dir}/train_log.csv', 'a', newline='\n', encoding='utf-8') as f:
+    #     f.write(f'{train_loss:.4f},{train_accuracy:.4f},{valid_loss:.4f},{valid_accuracy:.4f}\n')
 
     # Plot training losses
     print("******** 1st loss ******** ", losses[:, 0])
