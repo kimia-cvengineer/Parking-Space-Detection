@@ -232,7 +232,7 @@ def get_metric_epoch_losses(metric_logger):
     print(metric_logger.meters)
     print(metric_logger.meters.values())
     print([str(epoch_loss) for epoch_loss in metric_logger.meters.values()])
-    return [str(epoch_loss) for epoch_loss in metric_logger.meters.values()][1:6]
+    return [str(epoch_loss).split(" ") for epoch_loss in metric_logger.meters.values()][1:6]
 
 
 def save_metric_losses(log_file, metric_losses):
