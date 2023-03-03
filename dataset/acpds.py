@@ -1,4 +1,7 @@
 import json
+from time import time
+import multiprocessing as mp
+
 import torch
 import torchvision
 import torchvision.transforms as T
@@ -106,3 +109,13 @@ def create_datasets(dataset_path, batch_size, *args, **kwargs):
     data_loader_valid = DataLoader(ds_valid, batch_size=batch_size, shuffle=False, collate_fn=utils.collate_fn)
     data_loader_test = DataLoader(ds_test, batch_size=batch_size, shuffle=False, collate_fn=utils.collate_fn)
     return data_loader_train, data_loader_valid, data_loader_test
+
+def get_all_possible_num_of_workers(ds):
+    for num_workers in range(2, mp.cpu_count(), 2):
+        train_loader = DataLoader(ds,shuffle=True,num_workers=num_workers,batch_size=64,pin_memory=True)
+        start = time()
+        for epoch in range(1, 3):
+            for i, data in enumerate(train_loader, 0):
+                pass
+        end = time()
+        print("Finish with:{} second, num_workers={}".format(end - start, num_workers))

@@ -179,7 +179,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
             f.write("*********** evaluation step ***********" + '\n')
         print("*********** evaluation step ***********")
-        evaluate(model, valid_ds, res, model_dir,device)
+        evaluate(model, valid_ds, res, model_dir, device)
 
         # save weights
         if not os.path.exists(model_dir):
@@ -190,7 +190,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
     print("*********** testing step ***********")
-    evaluate(model, test_ds, res, device)
+    evaluate(model, test_ds, res, model_dir, device)
     # with open(f'{model_dir}/test_logs.json', 'w') as f:
     #     json.dump({'loss': test_loss, 'accuracy': test_accuracy}, f)
 
