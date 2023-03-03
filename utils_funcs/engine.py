@@ -201,9 +201,9 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     # Plot training losses
     print("losses : ", losses)
     print("len losses : ", len(losses))
-    print("epochs : ", [range(1, epochs + 1)])
+    print("epochs : ", range(1, epochs + 1))
     print("len epochs : ", len([range(1, epochs + 1)]))
-    plot_losses_per_epoch([range(1, epochs + 1)], losses)
+    plot_losses_per_epoch(range(1, epochs + 1), losses)
 
     # test model on test dataset
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
@@ -218,4 +218,4 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
 
 
 def get_metric_loss(metric_logger):
-    return str(metric_logger.meters["loss"]).split(" ")[0]
+    return int(str(metric_logger.meters["loss"]).split(" ")[0])
