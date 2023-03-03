@@ -222,7 +222,7 @@ class MultiRandomRotation(T.RandomRotation):
         # create rotation matrix
         angle_rad = torch.tensor((angle / 180.0) * 3.141592)
         R = torch.tensor([[torch.cos(angle_rad), -torch.sin(angle_rad)],
-                          [torch.sin(angle_rad), torch.cos(angle_rad)]], dtype=torch.float)
+                          [torch.sin(angle_rad), torch.cos(angle_rad)]], dtype=torch.float, device=device)
         boxes = target["boxes"]
         boxes = boxes.reshape(-1, 2, 2)
 
