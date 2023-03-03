@@ -229,7 +229,10 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
 
 def get_metric_epoch_losses(metric_logger):
-    return [loss_str.split("")[0] for loss_str in str(metric_logger).split("\t")[0:6]]
+    print(str(metric_logger).split("\t"))
+    print(str(metric_logger).split("\t")[0:6])
+    print(loss_str.split(" ") for loss_str in str(metric_logger).split("\t")[0:6])
+    return [loss_str.split(" ")[0] for loss_str in str(metric_logger).split("\t")[0:6]]
 
 
 def save_metric_losses(log_file, metric_losses):
