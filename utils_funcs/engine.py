@@ -10,6 +10,7 @@ import torchvision.models.detection.mask_rcnn
 from utils_funcs.coco_eval import CocoEvaluator
 from utils_funcs.coco_utils import get_coco_api_from_dataset
 from utils_funcs import utils, transforms, visualize
+from utils_funcs.visualize import plot_losses_per_epoch
 
 
 def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, print_freq, log_dir, scaler=None):
@@ -30,7 +31,8 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         images, targets = transforms.augment(images, targets)
 
         # preprocess image
-        res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device, res=resolution)
+        res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
+                                                     res=resolution)
         # update boxed according to the new resolution
         new_target = []
         for idx, target in enumerate(targets):
@@ -105,7 +107,8 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     coco_evaluator = CocoEvaluator(coco, iou_types)
     for images, targets in metric_logger.log_every(data_loader, 10, log_dir, header):
         # preprocess image
-        res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device, res=resolution)
+        res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
+                                                     res=resolution)
         # update boxed according to the new resolution
         if resolution is not None:
             for idx, target in enumerate(targets):
@@ -171,16 +174,18 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
                                                    step_size=3,
                                                    gamma=0.1)
+
+    losses = []
     # train
     for epoch in range(1, epochs + 1):
         # train for one epoch
         with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
             f.write("*********** training step ***********" + '\n')
         print("*********** training step ***********")
-        metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10, log_dir=model_dir)
+        metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10,
+                                        log_dir=model_dir)
         # lr_scheduler.step()
-        print(str(metric_logger))
-        print("losses : ", str(metric_logger.meters["loss"]).split(" ")[0])
+        losses.append(get_metric_loss(metric_logger))
 
         # evaluate on the valid dataset
         with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
@@ -193,6 +198,9 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
             os.makedirs(model_dir)
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
+    # Plot training losses
+    plot_losses_per_epoch([range(1, epochs + 1)], losses)
+
     # test model on test dataset
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
@@ -201,5 +209,9 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     # with open(f'{model_dir}/test_logs.json', 'w') as f:
     #     json.dump({'loss': test_loss, 'accuracy': test_accuracy}, f)
 
-    #delete model from memory
+    # delete model from memory
     del model
+
+
+def get_metric_loss(metric_logger):
+    return str(metric_logger.meters["loss"]).split(" ")[0]
