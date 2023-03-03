@@ -182,8 +182,10 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         # if this is the first epoch
         if epoch == 1:
             # ensure (an empty) model dir exists
-            shutil.rmtree(model_dir, ignore_errors=True)
-            os.makedirs(model_dir, exist_ok=False)
+            # shutil.rmtree(model_dir, ignore_errors=True)
+            if not os.path.exists(model_dir):
+                os.makedirs(model_dir)
+            # os.makedirs(model_dir, exist_ok=False)
             with open(f'{model_dir}/logs.txt', 'w', newline='\n', encoding='utf-8') as f:
                 f.write("*********** training step ***********" + '\n')
 
@@ -206,8 +208,6 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         evaluate(model, valid_ds, res, model_dir, device)
 
         # save weights
-        # if not os.path.exists(model_dir):
-        #     os.makedirs(model_dir)
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
     # save epoch logs
