@@ -120,3 +120,7 @@ def plot_img_bbox(img, target):
         # Draw the bounding box on top of the image
         a.add_patch(rect)
     plt.show()
+
+
+def plot_losses_per_epoch(epochs, losses):
+    plt.plot(epochs, losses)

@@ -177,8 +177,9 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
         with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
             f.write("*********** training step ***********" + '\n')
         print("*********** training step ***********")
-        train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10, log_dir=model_dir)
+        metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10, log_dir=model_dir)
         # lr_scheduler.step()
+        print(metric_logger.meters)
 
         # evaluate on the valid dataset
         with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
