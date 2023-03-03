@@ -142,7 +142,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     return coco_evaluator
 
 
-def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, epochs=30, lr_decay=50, res=None,
+def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, epochs=30, lr_decay=50, res=None,
                 verbose=False):
     """
     Trains any model which takes (image, rois) and outputs class_logits.
@@ -161,6 +161,11 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     optimizer = torch.optim.SGD(params, lr=0.005,
                                 momentum=0.9, weight_decay=0.0005)
 
+    # cosine lr shceduler
+    # lr = 8e-5
+    # plot losses
+    # increase epochs
+
     # and a learning rate scheduler which decreases the learning rate by
     # 10x every 3 epochs
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
@@ -173,7 +178,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
             f.write("*********** training step ***********" + '\n')
         print("*********** training step ***********")
         train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10, log_dir=model_dir)
-        lr_scheduler.step()
+        # lr_scheduler.step()
 
         # evaluate on the valid dataset
         with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
