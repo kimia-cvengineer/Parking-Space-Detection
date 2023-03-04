@@ -206,10 +206,11 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
         print("*********** evaluation step ***********")
         coco_eval = evaluate(model, valid_ds, res, model_dir, device)
-        mAP_results.append(coco_eval.get_mAP_results()[0])
+        epoch_mAPs = coco_eval.get_mAP_results()[0]
+        mAP_results.append(epoch_mAPs)
 
         # save mAP evaluation result
-        save_evaluation_results(f'{model_dir}/evaluation_result.csv', mAP_results)
+        save_evaluation_results(f'{model_dir}/evaluation_result.csv', epoch_mAPs)
 
         # save weights
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
@@ -255,6 +256,5 @@ def save_metric_losses(log_file, metric_loss):
 
 
 def save_evaluation_results(log_file, mAPs):
-    print("maps : ",mAPs)
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
         f.write(f'{mAPs[0]:.3f}, {mAPs[1]:.3f}\n')
