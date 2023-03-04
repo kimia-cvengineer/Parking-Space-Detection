@@ -250,5 +250,5 @@ def save_metric_losses(log_file, metric_losses):
 
 def save_evaluation_results(log_file, results):
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
-        for APs in results:
-            f.write(f'{APs[0]:.3f}, {APs[1]:.3f}\n')
+        for mAPs in results:
+            f.write(f'{mAPs:.3f}\n')
