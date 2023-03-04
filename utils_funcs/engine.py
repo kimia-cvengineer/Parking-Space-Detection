@@ -144,7 +144,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     return coco_evaluator
 
 
-def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, epochs=30, lr_decay=50, res=None,
+def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, epochs=30, lr_decay=50, res=None,
                 verbose=False):
     """
     Trains any model which takes (image, rois) and outputs class_logits.
@@ -193,7 +193,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         print("*********** training step ***********")
         metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10,
                                         log_dir=model_dir)
-        lr_scheduler.step()
+        # lr_scheduler.step()
         epoch_losses = get_metric_epoch_losses(metric_logger)
         losses.append(epoch_losses)
 
@@ -257,4 +257,4 @@ def save_metric_losses(log_file, metric_loss):
 
 def save_evaluation_results(log_file, mAPs):
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
-        f.write(f'{mAPs[0]:.3f}, {mAPs[1]:.3f}\n')
+        f.write(f'{mAPs[0]:.3f},{mAPs[1]:.3f}\n')
