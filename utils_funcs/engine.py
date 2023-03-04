@@ -144,7 +144,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     return coco_evaluator
 
 
-def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, epochs=30, lr_decay=5, res=None,
+def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, epochs=30, lr_decay=50, res=None,
                 verbose=False):
     """
     Trains any model which takes (image, rois) and outputs class_logits.
@@ -157,15 +157,15 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
     # construct an Adam optimizer
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW(params, lr=lr)
-    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
+    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
 
 
     # construct an SGD optimizer
     params = [p for p in model.parameters() if p.requires_grad]
     # optimizer = torch.optim.SGD(params, lr=lr,
     #                             momentum=0.9, weight_decay=0.0005)
-    # lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10, eta_min=1e-6)
-    # lr_scheduler = None
+    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10, eta_min=1e-6)
+    lr_scheduler = None
     # cosine lr shceduler
     # lr = 8e-5
     # plot losses
