@@ -10,7 +10,7 @@ import torchvision.models.detection.mask_rcnn
 from utils_funcs.coco_eval import CocoEvaluator
 from utils_funcs.coco_utils import get_coco_api_from_dataset
 from utils_funcs import utils, transforms, visualize
-from utils_funcs.visualize import plot_losses_per_epoch
+from utils_funcs.visualize import plot_log_per_epoch
 
 
 def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, print_freq, log_dir, scaler=None):
@@ -211,7 +211,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
         print("*********** evaluation step ***********")
         coco_eval = evaluate(model, valid_ds, res, model_dir, device)
-        mAP_results.append(coco_eval.get_mAP_results()[0])
+        mAP_results.append(round(coco_eval.get_mAP_results()[0], 3))
 
         # save weights
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
@@ -221,10 +221,10 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     save_evaluation_results(f'{model_dir}/evaluation_result.csv', mAP_results)
 
     # Plot training losses
-    plot_losses_per_epoch(range(1, epochs + 1), [loss[0] for loss in losses], "Losses")
+    plot_log_per_epoch(range(1, epochs + 1), [loss[0] for loss in losses], "Losses")
 
     # Plot evaluation AP results [IoU=0.50:0.95]
-    plot_losses_per_epoch(range(1, epochs + 1), [mAP[1] for mAP in mAP_results], "mAPs")
+    plot_log_per_epoch(range(1, epochs + 1), [mAP[1] for mAP in mAP_results], "mAPs")
 
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
@@ -238,7 +238,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
 
 def get_metric_epoch_losses(metric_logger):
-    return [str(epoch_loss).split(" ")[0] for epoch_loss in metric_logger.meters.values()][1:6]
+    return [round(float(str(epoch_loss).split(" ")[0]), 3) for epoch_loss in metric_logger.meters.values()][1:6]
 
 
 def save_metric_losses(log_file, metric_losses):
