@@ -221,8 +221,8 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     save_evaluation_results(f'{model_dir}/evaluation_result.csv', AP_results)
 
     # Plot training losses
-    print("******** 1st loss ******** ", losses[:, 0])
-    plot_losses_per_epoch(range(1, epochs + 1), losses[:, 0])
+    print("******** 1st loss ******** ", [loss[0] for loss in losses])
+    plot_losses_per_epoch(range(1, epochs + 1), [loss[0] for loss in losses])
 
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
