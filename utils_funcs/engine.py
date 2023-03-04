@@ -144,7 +144,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     return coco_evaluator
 
 
-def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, epochs=30, lr_decay=50, res=None,
+def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, epochs=30, lr_decay=50, res=None,
                 verbose=False):
     """
     Trains any model which takes (image, rois) and outputs class_logits.
