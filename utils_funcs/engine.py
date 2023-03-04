@@ -165,6 +165,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
     # optimizer = torch.optim.SGD(params, lr=lr,
     #                             momentum=0.9, weight_decay=0.0005)
     lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10, eta_min=0)
+    lr_scheduler = None
     # cosine lr shceduler
     # lr = 8e-5
     # plot losses
@@ -195,7 +196,8 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
         print("*********** training step ***********")
         metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10,
                                         log_dir=model_dir)
-        lr_scheduler.step()
+        if lr_scheduler is not None:
+            lr_scheduler.step()
         epoch_losses = get_metric_epoch_losses(metric_logger)
         losses.append(epoch_losses)
 
