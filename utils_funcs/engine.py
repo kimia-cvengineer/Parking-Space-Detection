@@ -255,5 +255,6 @@ def save_metric_losses(log_file, metric_loss):
 
 
 def save_evaluation_results(log_file, mAPs):
+    print("maps : ",mAPs)
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
         f.write(f'{mAPs[0]:.3f}, {mAPs[1]:.3f}\n')
