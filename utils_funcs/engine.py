@@ -153,11 +153,12 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     """
     # transfer model to device
     model = model.to(device)
-    model_dir = f'./{model_dir}'
+
     # construct an Adam optimizer
     params = [p for p in model.parameters() if p.requires_grad]
     optimizer = torch.optim.AdamW(params, lr=lr)
     # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, lr_decay, gamma=0.1)
+
 
     # construct an SGD optimizer
     params = [p for p in model.parameters() if p.requires_grad]
@@ -168,6 +169,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     # lr = 8e-5
     # plot losses
     # increase epochs
+    model_dir = f'./{model_dir}_lr_{lr}_Opt_{optimizer.__class__.__name__}_Sch_{lr_scheduler.__class__.__name__}'
 
     # and a learning rate scheduler which decreases the learning rate by
     # 10x every 3 epochs
