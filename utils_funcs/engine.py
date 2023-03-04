@@ -224,7 +224,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     plot_losses_per_epoch(range(1, epochs + 1), [loss[0] for loss in losses], "Losses")
 
     # Plot evaluation AP results [IoU=0.50:0.95]
-    plot_losses_per_epoch(range(1, epochs + 1), mAP_results, "mAP")
+    plot_losses_per_epoch(range(1, epochs + 1), [mAP[1] for mAP in mAP_results], "mAPs")
 
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
@@ -251,4 +251,4 @@ def save_metric_losses(log_file, metric_losses):
 def save_evaluation_results(log_file, results):
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
         for mAPs in results:
-            f.write(f'{mAPs:.3f}\n')
+            f.write(f'{mAPs[0]:.3f}, {mAPs[1]:.3f}\n')

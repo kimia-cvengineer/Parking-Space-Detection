@@ -80,7 +80,7 @@ class CocoEvaluator:
     def get_mAP_results(self):
         mAPs = []
         for iou_type, coco_eval in self.coco_eval.items():
-            mAPs.append(sum(coco_eval.stats[0:6])/6)
+            mAPs.append(coco_eval.stats)
         return mAPs
 
     def get_formatted_log(self, coco_eval, stat, ap, iouThr=None, areaRng='all', maxDets=100):
