@@ -211,7 +211,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
         print("*********** evaluation step ***********")
         coco_eval = evaluate(model, valid_ds, res, model_dir, device)
-        AP_results.append(coco_eval.get_mAP_50_90())
+        AP_results.append(coco_eval.get_AP_results()[0])
 
         # save weights
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')

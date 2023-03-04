@@ -77,7 +77,7 @@ class CocoEvaluator:
             for summary_str in summaries_str:
                 f.write(summary_str + '\n')
 
-    def get_mAP_50_90(self):
+    def get_AP_results(self):
         mAPs = []
         for iou_type, coco_eval in self.coco_eval.items():
             mAPs.append(coco_eval.stats)
