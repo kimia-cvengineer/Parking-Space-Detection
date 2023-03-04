@@ -202,7 +202,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10,
                                         log_dir=model_dir)
         lr_scheduler.step()
-
+        print("mAP : ", get_metric_epoch_losses(metric_logger))
         losses.append(get_metric_epoch_losses(metric_logger))
 
         # evaluate on the valid dataset
@@ -211,6 +211,8 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
         print("*********** evaluation step ***********")
         coco_eval = evaluate(model, valid_ds, res, model_dir, device)
+        print("mAP : ", coco_eval.get_mAP_results()[0])
+        print("mAP type: ", type(coco_eval.get_mAP_results()[0]))
         mAP_results.append(round(coco_eval.get_mAP_results()[0], 3))
 
         # save weights
@@ -238,6 +240,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
 
 def get_metric_epoch_losses(metric_logger):
+    print("get_metric_epoch_losses : ", [float(str(epoch_loss).split(" ")[0]) for epoch_loss in metric_logger.meters.values()][1:6])
     return [round(float(str(epoch_loss).split(" ")[0]), 3) for epoch_loss in metric_logger.meters.values()][1:6]
 
 
