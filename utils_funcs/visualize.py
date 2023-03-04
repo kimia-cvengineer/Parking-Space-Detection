@@ -123,7 +123,6 @@ def plot_img_bbox(img, target):
 
 
 def plot_log_per_epoch(epochs, values, y_label):
-    print("Values to be plotted : ", values)
     plt.plot(epochs, values)
     plt.xlabel('Epochs')
     plt.ylabel(y_label)
