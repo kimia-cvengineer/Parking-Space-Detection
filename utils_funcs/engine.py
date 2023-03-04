@@ -175,7 +175,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     #                                                step_size=3,
     #                                                gamma=0.1)
 
-    losses, AP_results = [], []
+    losses, mAP_results = [], []
     # train
     for epoch in range(1, epochs + 1):
         # train for one epoch
@@ -211,20 +211,20 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
 
         print("*********** evaluation step ***********")
         coco_eval = evaluate(model, valid_ds, res, model_dir, device)
-        AP_results.append(coco_eval.get_AP_results()[0])
+        mAP_results.append(coco_eval.get_mAP_results()[0])
 
         # save weights
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
     # save epoch logs
     save_metric_losses(f'{model_dir}/train_losses.csv', losses)
-    save_evaluation_results(f'{model_dir}/evaluation_result.csv', AP_results)
+    save_evaluation_results(f'{model_dir}/evaluation_result.csv', mAP_results)
 
     # Plot training losses
-    plot_losses_per_epoch(range(1, epochs + 1), [loss[0] for loss in losses])
+    plot_losses_per_epoch(range(1, epochs + 1), [loss[0] for loss in losses], "Losses")
 
     # Plot evaluation AP results [IoU=0.50:0.95]
-    plot_losses_per_epoch(range(1, epochs + 1), [AP[0] for AP in AP_results])
+    plot_losses_per_epoch(range(1, epochs + 1), mAP_results, "mAP")
 
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')

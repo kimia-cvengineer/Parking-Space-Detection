@@ -77,10 +77,10 @@ class CocoEvaluator:
             for summary_str in summaries_str:
                 f.write(summary_str + '\n')
 
-    def get_AP_results(self):
+    def get_mAP_results(self):
         mAPs = []
         for iou_type, coco_eval in self.coco_eval.items():
-            mAPs.append(coco_eval.stats)
+            mAPs.append(sum(coco_eval.stats[0:6])/6)
         return mAPs
 
     def get_formatted_log(self, coco_eval, stat, ap, iouThr=None, areaRng='all', maxDets=100):

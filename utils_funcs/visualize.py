@@ -122,8 +122,8 @@ def plot_img_bbox(img, target):
     plt.show()
 
 
-def plot_losses_per_epoch(epochs, losses):
+def plot_losses_per_epoch(epochs, losses, y_label):
     plt.plot(epochs, losses)
     plt.xlabel('Epochs')
-    plt.ylabel('Losses')
+    plt.ylabel(y_label)
     plt.show()
