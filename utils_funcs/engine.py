@@ -144,7 +144,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     return coco_evaluator
 
 
-def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, epochs=30, lr_decay=50, res=None,
+def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, epochs=30, lr_decay=50, res=None,
                 verbose=False):
     """
     Trains any model which takes (image, rois) and outputs class_logits.
@@ -221,8 +221,10 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=8e-5, 
     save_evaluation_results(f'{model_dir}/evaluation_result.csv', AP_results)
 
     # Plot training losses
-    print("******** 1st loss ******** ", [loss[0] for loss in losses])
     plot_losses_per_epoch(range(1, epochs + 1), [loss[0] for loss in losses])
+
+    # Plot evaluation AP results [IoU=0.50:0.95]
+    plot_losses_per_epoch(range(1, epochs + 1), [AP[0] for AP in AP_results])
 
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
