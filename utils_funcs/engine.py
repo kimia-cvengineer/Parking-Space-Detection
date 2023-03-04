@@ -175,7 +175,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     #                                                step_size=3,
     #                                                gamma=0.1)
 
-    losses = []
+    losses, AP_results = [], []
     # train
     for epoch in range(1, epochs + 1):
         # train for one epoch
@@ -190,15 +190,19 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
             with open(f'{model_dir}/logs.txt', 'w', newline='\n', encoding='utf-8') as f:
                 f.write("*********** training step ***********" + '\n')
 
-            # create log header
+            # create loss log header
             with open(f'{model_dir}/train_losses.csv', 'w', newline='\n', encoding='utf-8') as f:
                 f.write('loss,loss_classifier,loss_box_reg,loss_objectness,loss_rpn_box_reg\n')
+
+            # create mAP log header
+            with open(f'{model_dir}/evaluation_result.csv', 'w', newline='\n', encoding='utf-8') as f:
+                f.write('AP [IoU=0.50:0.95], AP [IoU=0.50]\n')
 
         print("*********** training step ***********")
         metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10,
                                         log_dir=model_dir)
         lr_scheduler.step()
-        print("########### losses ############", get_metric_epoch_losses(metric_logger))
+
         losses.append(get_metric_epoch_losses(metric_logger))
 
         # evaluate on the valid dataset
@@ -206,13 +210,15 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
             f.write("*********** evaluation step ***********" + '\n')
 
         print("*********** evaluation step ***********")
-        evaluate(model, valid_ds, res, model_dir, device)
+        coco_eval = evaluate(model, valid_ds, res, model_dir, device)
+        AP_results.append(coco_eval.get_mAP_50_90())
 
         # save weights
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
 
     # save epoch logs
     save_metric_losses(f'{model_dir}/train_losses.csv', losses)
+    save_evaluation_results(f'{model_dir}/evaluation_result.csv', AP_results)
 
     # Plot training losses
     print("******** 1st loss ******** ", losses[:, 0])
@@ -237,4 +243,10 @@ def save_metric_losses(log_file, metric_losses):
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
         for epoch_losses in metric_losses:
             f.write(
-                f'{epoch_losses[0]:.4f},{epoch_losses[1]:.4f},{epoch_losses[2]:.4f},{epoch_losses[3]:.4f},{epoch_losses[4]:.4f}\n')
+                f'{epoch_losses[0]},{epoch_losses[1]},{epoch_losses[2]},{epoch_losses[3]},{epoch_losses[4]}\n')
+
+
+def save_evaluation_results(log_file, results):
+    with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
+        for APs in results:
+            f.write(f'{APs[0]}, {APs[1]}\n')

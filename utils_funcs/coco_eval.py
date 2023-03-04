@@ -77,6 +77,12 @@ class CocoEvaluator:
             for summary_str in summaries_str:
                 f.write(summary_str + '\n')
 
+    def get_mAP_50_90(self):
+        mAPs = []
+        for iou_type, coco_eval in self.coco_eval.items():
+            mAPs.append(coco_eval.stats)
+        return mAPs
+
     def get_formatted_log(self, coco_eval, stat, ap, iouThr=None, areaRng='all', maxDets=100):
         p = coco_eval.params
         iStr = ' {:<18} {} @[ IoU={:<9} | area={:>6s} | maxDets={:>3d} ] = {:0.3f}'
