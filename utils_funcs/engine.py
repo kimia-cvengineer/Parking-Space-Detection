@@ -187,23 +187,18 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
             if not os.path.exists(model_dir):
                 os.makedirs(model_dir)
             # os.makedirs(model_dir, exist_ok=False)
-            with open(f'{model_dir}/logs.txt', 'w', newline='\n', encoding='utf-8') as f:
-                f.write("*********** training step ***********" + '\n')
 
-            # create loss log header
-            with open(f'{model_dir}/train_losses.csv', 'w', newline='\n', encoding='utf-8') as f:
-                f.write('loss,loss_classifier,loss_box_reg,loss_objectness,loss_rpn_box_reg\n')
-
-            # create mAP log header
-            with open(f'{model_dir}/evaluation_result.csv', 'w', newline='\n', encoding='utf-8') as f:
-                f.write('AP [IoU=0.50:0.95], AP [IoU=0.50]\n')
+            create_logs_header(model_dir)
 
         print("*********** training step ***********")
         metric_logger = train_one_epoch(model, optimizer, train_ds, res, device, epoch, print_freq=10,
                                         log_dir=model_dir)
         lr_scheduler.step()
-        print("mAP : ", get_metric_epoch_losses(metric_logger))
-        losses.append(get_metric_epoch_losses(metric_logger))
+        epoch_losses = get_metric_epoch_losses(metric_logger)
+        losses.append(epoch_losses)
+
+        # save training losses
+        save_metric_losses(f'{model_dir}/train_losses.csv', epoch_losses)
 
         # evaluate on the valid dataset
         with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
@@ -213,12 +208,11 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
         coco_eval = evaluate(model, valid_ds, res, model_dir, device)
         mAP_results.append(coco_eval.get_mAP_results()[0])
 
+        # save mAP evaluation result
+        save_evaluation_results(f'{model_dir}/evaluation_result.csv', mAP_results)
+
         # save weights
         torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
-
-    # save epoch logs
-    save_metric_losses(f'{model_dir}/train_losses.csv', losses)
-    save_evaluation_results(f'{model_dir}/evaluation_result.csv', mAP_results)
 
     # Plot training losses
     plot_log_per_epoch(range(1, epochs + 1), [round(loss[0], 3) for loss in losses], "Losses")
@@ -237,19 +231,29 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-4, 
     del model
 
 
+def create_logs_header(model_dir):
+    with open(f'{model_dir}/logs.txt', 'w', newline='\n', encoding='utf-8') as f:
+        f.write("*********** training step ***********" + '\n')
+
+    # create loss log header
+    with open(f'{model_dir}/train_losses.csv', 'w', newline='\n', encoding='utf-8') as f:
+        f.write('loss,loss_classifier,loss_box_reg,loss_objectness,loss_rpn_box_reg\n')
+
+    # create mAP log header
+    with open(f'{model_dir}/evaluation_result.csv', 'w', newline='\n', encoding='utf-8') as f:
+        f.write('AP [IoU=0.50:0.95], AP [IoU=0.50]\n')
+
+
 def get_metric_epoch_losses(metric_logger):
-    print("get_metric_epoch_losses : ", [float(str(epoch_loss).split(" ")[0]) for epoch_loss in metric_logger.meters.values()][1:6])
     return [round(float(str(epoch_loss).split(" ")[0]), 3) for epoch_loss in metric_logger.meters.values()][1:6]
 
 
-def save_metric_losses(log_file, metric_losses):
+def save_metric_losses(log_file, metric_loss):
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
-        for epoch_losses in metric_losses:
-            f.write(
-                f'{epoch_losses[0]},{epoch_losses[1]},{epoch_losses[2]},{epoch_losses[3]},{epoch_losses[4]}\n')
+        f.write(
+            f'{metric_loss[0]},{metric_loss[1]},{metric_loss[2]},{metric_loss[3]},{metric_loss[4]}\n')
 
 
-def save_evaluation_results(log_file, results):
+def save_evaluation_results(log_file, mAPs):
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
-        for mAPs in results:
-            f.write(f'{mAPs[0]:.3f}, {mAPs[1]:.3f}\n')
+        f.write(f'{mAPs[0]:.3f}, {mAPs[1]:.3f}\n')
