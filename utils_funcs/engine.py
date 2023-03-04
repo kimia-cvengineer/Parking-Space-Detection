@@ -169,7 +169,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
     # lr = 8e-5
     # plot losses
     # increase epochs
-    model_dir = f'./{model_dir}_lr_{lr}_Opt_{optimizer.__class__.__name__}_Sch_{lr_scheduler.__class__.__name__}'
+    model_dir = f'./{model_dir}/LR_{lr}_{optimizer.__class__.__name__}_{lr_scheduler.__class__.__name__}'
 
     # and a learning rate scheduler which decreases the learning rate by
     # 10x every 3 epochs
