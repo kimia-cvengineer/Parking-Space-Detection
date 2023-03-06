@@ -10,7 +10,7 @@ import torchvision.transforms.functional as TF
 from torch.utils.data import DataLoader
 from functools import lru_cache
 
-from models.utils.pooling import convert_points_2_two
+from models.utils.pooling import convert_points_2_two, calculate_rectangular_coordinates
 from utils_funcs import utils
 
 
@@ -65,6 +65,10 @@ class ACPDS():
 
         rois[..., 0] *= (W - 1)
         rois[..., 1] *= (H - 1)
+
+        # Project quadrilaterals to minimum rectangle
+        rois = [calculate_rectangular_coordinates(roi[0], roi[1], roi[2], roi[3]) for roi in rois]
+
         rois = convert_points_2_two(rois)
 
         # getting the areas of the boxes

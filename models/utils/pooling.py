@@ -208,3 +208,72 @@ def convert_points_2_two(rois: Tensor):
     maxY = torch.unsqueeze(torch.amax(rois[:, :, 1], 1), dim=-1)
 
     return torch.hstack((minX, minY, maxX, maxY))
+
+
+def get_line_between(p1, p2):
+    """
+    Calculates the coordinates of a line between two points
+    returns slope and intercept of the line
+    """
+    (x1, y1) = p1
+    (x2, y2) = p2
+    m = (y1 - y2) / (x1 - x2)
+    b = (x1 * y2 - x2 * y1) / (x1 - x2)
+    return m, b
+
+
+def get_perpendicular_line(line, point):
+    (m1, b1) = line
+    (x, y) = point
+    if m1 != 0:
+        m = -1 / m1
+        b = y - m * x
+    else:
+        return 0, 0  # TODO
+    return m, b
+
+
+def get_intersection_of_two_perpendicular_lines(line1, line2):
+    (m1, b1) = line1
+    (m2, b2) = line2
+    determinant = m1 * b2 - m2 * b1
+
+    if determinant == 0:
+        # The lines are parallel. This is simplified
+        # by returning a pair of FLT_MAX
+        raise Exception("Lines are parallel. No intersection.")
+        # return 10 ** 9, 10 ** 9
+    elif m1 != m2:
+        raise Exception("Lines are not perpendicular to each other.")
+    else:
+        x = (b2 - b1) / m1 + 1/m1
+        y = m1 * x + b1
+        return x, y
+
+
+def calculate_rectangular_coordinates(p1, p2, p3, p4):
+    """
+    converts the four coordinates of a quadrilateral to
+    the two coordinates of a rectangular box ( top left and bottom right)
+    """
+    (m1, b1) = get_line_between(p1, p4)
+    (m2, b2) = get_line_between(p2, p3)
+
+    # get the top perpendicular line to the 1st line
+    if p1[0] > p4[0]:
+        m3, b3 = get_perpendicular_line((m1, b1), p2)
+        # get the top corner coordinate
+        (x_top, y_top) = get_intersection_of_two_perpendicular_lines((m1, b1), (m3, b3))
+        m4, b4 = get_perpendicular_line((m1, b1), p4)
+        # get the bottom corner coordinate
+        (x_bottom, y_bottom) = get_intersection_of_two_perpendicular_lines((m2, b2), (m4, b4))
+        return (x_top, y_top), p2, (x_bottom, y_bottom), p4
+    else:
+        m3, b3 = get_perpendicular_line((m1, b1), p1)
+        # get the top corner coordinate
+        (x_top, y_top) = get_intersection_of_two_perpendicular_lines((m2, b2), (m3, b3))
+        m4, b4 = get_perpendicular_line((m1, b1), p3)
+        # get the bottom corner coordinate
+        (x_bottom, y_bottom) = get_intersection_of_two_perpendicular_lines((m1, b1), (m4, b4))
+
+        return p1, (x_top, y_top), p3, (x_bottom, y_bottom)
