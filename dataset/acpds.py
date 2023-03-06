@@ -63,8 +63,8 @@ class ACPDS():
         rois = torch.tensor(rois)
         C, H, W = image.shape
 
-        rois[..., 0] *= (W - 1)
-        rois[..., 1] *= (H - 1)
+        # rois[..., 0] *= (W - 1)
+        # rois[..., 1] *= (H - 1)
 
         # Project quadrilaterals to minimum rectangle
         # rois = torch.tensor([calculate_rectangular_coordinates(roi[0], roi[1], roi[2], roi[3]) for roi in rois])
