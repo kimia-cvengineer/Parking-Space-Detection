@@ -67,7 +67,7 @@ class ACPDS():
         rois[..., 1] *= (H - 1)
 
         # Project quadrilaterals to minimum rectangle
-        rois = [calculate_rectangular_coordinates(roi[0], roi[1], roi[2], roi[3]) for roi in rois]
+        rois = torch.tensor([calculate_rectangular_coordinates(roi[0], roi[1], roi[2], roi[3]) for roi in rois])
 
         rois = convert_points_2_two(rois)
 
