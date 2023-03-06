@@ -1,3 +1,4 @@
+import numpy
 import torch
 
 from torch import nn, Tensor
@@ -237,15 +238,15 @@ def get_intersection_of_two_perpendicular_lines(line1, line2):
     (m1, b1) = line1
     (m2, b2) = line2
     determinant = m1 * b2 - m2 * b1
-    print("m1: ",m1)
-    print("m2: ",m2 )
+    print("m1: ", m1)
+    print("m2: ", m2)
 
     if determinant == 0:
         # The lines are parallel. This is simplified
         # by returning a pair of FLT_MAX
         raise Exception("Lines are parallel. No intersection.")
         # return 10 ** 9, 10 ** 9
-    elif m1 != -1/m2:
+    elif numpy.sign(m1) != -numpy.sign(m2):
         raise Exception("Lines are not perpendicular to each other.")
     else:
         x = (b2 - b1) / m1 + 1/m1
