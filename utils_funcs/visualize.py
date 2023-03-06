@@ -85,6 +85,7 @@ def plot_ds_image(image, rois, occupancy, true_occupancy=None, fname=None, show=
             print(f"x4, y4: ({roi[3][0]}, {roi[3][1]})")
             polygon = Polygon(roi, fc=color, alpha=0.3)
             polygons.append(polygon)
+        i++
     p = PatchCollection(polygons, match_original=True)
     ax.add_collection(p)
 
