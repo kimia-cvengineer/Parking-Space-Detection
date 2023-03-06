@@ -78,13 +78,13 @@ def plot_ds_image(image, rois, occupancy, true_occupancy=None, fname=None, show=
     i = 0
     mid_roi = rois.shape[0]//2
     for roi, color in zip(rois, colors):
-        if i ==mid_roi:
-            print(f"x1, y1: ({roi[0][0]}, {roi[0][1]})")
-            print(f"x2, y2: ({roi[1][0]}, {roi[1][1]})")
-            print(f"x3, y3: ({roi[2][0]}, {roi[2][1]})")
-            print(f"x4, y4: ({roi[3][0]}, {roi[3][1]})")
-            polygon = Polygon(roi, fc=color, alpha=0.3)
-            polygons.append(polygon)
+        # if i ==mid_roi:
+        print(f"x1, y1: ({roi[0][0]}, {roi[0][1]})")
+        print(f"x2, y2: ({roi[1][0]}, {roi[1][1]})")
+        print(f"x3, y3: ({roi[2][0]}, {roi[2][1]})")
+        print(f"x4, y4: ({roi[3][0]}, {roi[3][1]})")
+        polygon = Polygon(roi, fc=color, alpha=0.3)
+        polygons.append(polygon)
         i+=1
     p = PatchCollection(polygons, match_original=True)
     ax.add_collection(p)
