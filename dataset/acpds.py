@@ -63,17 +63,17 @@ class ACPDS():
         rois = torch.tensor(rois)
         C, H, W = image.shape
 
-        # rois[..., 0] *= (W - 1)
-        # rois[..., 1] *= (H - 1)
+        rois[..., 0] *= (W - 1)
+        rois[..., 1] *= (H - 1)
 
         # Project quadrilaterals to minimum rectangle
         # rois = torch.tensor([calculate_rectangular_coordinates(roi[0], roi[1], roi[2], roi[3]) for roi in rois])
         #
-        # rois = convert_points_2_two(rois)
+        rois = convert_points_2_two(rois)
 
         # getting the areas of the boxes
-        # area = (rois[:, 3] - rois[:, 1]) * (rois[:, 2] - rois[:, 0])
-        area = torch.tensor(range(rois.shape[0]))
+        area = (rois[:, 3] - rois[:, 1]) * (rois[:, 2] - rois[:, 0])
+        # area = torch.tensor(range(rois.shape[0]))
 
         # suppose all instances are not crowd
         iscrowd = torch.zeros((rois.shape[0],), dtype=torch.int64)
