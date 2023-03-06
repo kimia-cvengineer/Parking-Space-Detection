@@ -245,7 +245,7 @@ def get_intersection_of_two_perpendicular_lines(line1, line2):
         # by returning a pair of FLT_MAX
         raise Exception("Lines are parallel. No intersection.")
         # return 10 ** 9, 10 ** 9
-    elif m1 != 1/m2:
+    elif m1 != -1/m2:
         raise Exception("Lines are not perpendicular to each other.")
     else:
         x = (b2 - b1) / m1 + 1/m1
