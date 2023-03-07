@@ -13,8 +13,8 @@ def create_model():
     num_classes = 2  # occupied + vacant
 
     # replace classification layer
-    in_features = model.head.classification_head.conv[0].in_channels
-    num_anchors = model.head.classification_head.num_anchors
+    # in_features = model.head.classification_head.conv[0].in_channels
+    # num_anchors = model.head.classification_head.num_anchors
     model.head.classification_head.num_classes = num_classes
 
     # out_channels
