@@ -20,10 +20,11 @@ class ACPDS():
     parking space coordinates (ROIs), and occupancies.
     Returns the tuple (image, rois, occupancy).
     """
-    def __init__(self, dataset_path, ds_type='train', res=None):
+    def __init__(self, dataset_path, ds_type='train', res=None, transform=None):
         self.dataset_path = dataset_path
         self.ds_type = ds_type
         self.res = res
+        self.transform = transform
 
         # load all annotations
         with open(f'{self.dataset_path}/annotations.json', 'r') as f:
