@@ -224,6 +224,13 @@ def get_line_between(p1, p2):
 
 
 def get_perpendicular_line(line, point):
+    """
+    find a line perpendicular to the line
+    and the point lies on it
+    :param line:
+    :param point:
+    :return:
+    """
     (m1, b1) = line
     (x, y) = point
     if m1 != 0:
@@ -249,9 +256,28 @@ def get_intersection_of_two_perpendicular_lines(line1, line2):
     elif numpy.sign(m1) != -numpy.sign(m2):
         raise Exception("Lines are not perpendicular to each other.")
     else:
-        x = (b2 - b1) / m1 + 1/m1
+        x = (b2 - b1) / m1 + 1 / m1
         y = m1 * x + b1
         return x, y
+
+
+def sort_box_points(p1, p2, p3, p4):
+    """
+    sort box coordinates by y in ascending order
+    :param p1:
+    :param p2:
+    :param p3:
+    :param p4:
+    :return:
+    """
+    # create a structured numpy array
+    dtype = [('x', float), ('y', float)]
+    values = [p1, p2, p3, p4]
+
+    # create a structured array
+    array = numpy.array(values, dtype=dtype)
+    array.sort(order='y')
+    return array[0], array[1], array[2], array[3]
 
 
 def calculate_rectangular_coordinates(p1, p2, p3, p4):
@@ -259,24 +285,21 @@ def calculate_rectangular_coordinates(p1, p2, p3, p4):
     converts the four coordinates of a quadrilateral to
     the two coordinates of a rectangular box ( top left and bottom right)
     """
+    # organize box points in a way to find the parallel line
+    p1, p2, p4, p3 = sort_box_points(p1, p2, p3, p4)
+
+    # find two parallel lines along with y-axis
     (m1, b1) = get_line_between(p1, p4)
     (m2, b2) = get_line_between(p2, p3)
 
-    # get the top perpendicular line to the 1st line
-    if p1[0] > p4[0]:
-        m3, b3 = get_perpendicular_line((m1, b1), p2)
-        # get the top corner coordinate
-        (x_top, y_top) = get_intersection_of_two_perpendicular_lines((m1, b1), (m3, b3))
-        m4, b4 = get_perpendicular_line((m1, b1), p4)
-        # get the bottom corner coordinate
-        (x_bottom, y_bottom) = get_intersection_of_two_perpendicular_lines((m2, b2), (m4, b4))
-        return (x_top, y_top), p2, (x_bottom, y_bottom), p4
-    else:
-        m3, b3 = get_perpendicular_line((m1, b1), p1)
-        # get the top corner coordinate
-        (x_top, y_top) = get_intersection_of_two_perpendicular_lines((m2, b2), (m3, b3))
-        m4, b4 = get_perpendicular_line((m1, b1), p3)
-        # get the bottom corner coordinate
-        (x_bottom, y_bottom) = get_intersection_of_two_perpendicular_lines((m1, b1), (m4, b4))
+    # get the top perpendicular line to the l2
+    m3, b3 = get_perpendicular_line((m2, b2), p1)
+    # get the top corner coordinate
+    (x_top, y_top) = get_intersection_of_two_perpendicular_lines((m2, b2), (m3, b3))
 
-        return p1, (x_top, y_top), p3, (x_bottom, y_bottom)
+    # get the top perpendicular line to the l1
+    m4, b4 = get_perpendicular_line((m1, b1), p3)
+    # get the bottom corner coordinate
+    (x_bottom, y_bottom) = get_intersection_of_two_perpendicular_lines((m1, b1), (m4, b4))
+
+    return p1, (x_top, y_top), p3, (x_bottom, y_bottom)
