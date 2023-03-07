@@ -74,8 +74,21 @@ def prev_augment(images, rois):
     return new_images, new_rois
 
 
-# Send train=True for training transforms and False for val/test transforms
 def get_transform(train):
+    if train:
+        return A.Compose([
+            # A.HorizontalFlip(0.5),
+            # ToTensorV2 converts image to pytorch tensor without div by 255
+            ToTensorV2(p=1.0)
+        ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
+    else:
+        return A.Compose([
+            ToTensorV2(p=1.0)
+        ], bbox_params={'format': 'pascal_voc', 'label_fields': ['labels']})
+
+
+# Send train=True for training transforms and False for val/test transforms
+def get_aug_transform(train):
     # torch.manual_seed(17)
     if train:
         return Compose([
@@ -94,7 +107,7 @@ def get_transform(train):
 def augment(images, targets):
     new_images, new_targets = list(images), list(targets)
     i = 0
-    transforms = get_transform(True)
+    transforms = get_aug_transform(True)
     for img, target in zip(images, targets):
         # if not isinstance(img, numpy.ndarray):
         #     img = img.permute(1, 2, 0).numpy()
@@ -231,12 +244,12 @@ class MultiRandomRotation(T.RandomRotation):
         # move points to an absolute coordinate system with [0, 0] as the center of the image
         # points = target['boxes'].clone()
         # points -= 0.5
-        boxes[..., 0] -= w/2
-        boxes[..., 1] -= h/2
+        boxes[..., 0] -= w / 2
+        boxes[..., 1] -= h / 2
         # rotate the points
         boxes = boxes @ R
-        boxes[..., 0] += w/2
-        boxes[..., 1] += h/2
+        boxes[..., 0] += w / 2
+        boxes[..., 1] += h / 2
 
         boxes = boxes.reshape(-1, 4)
         target["boxes"] = boxes
