@@ -118,7 +118,8 @@ def plot_img_bbox(img, target):
     a.imshow(image_pt_to_np(img))
 
     for box in (target['boxes']):
-        x, y, width, height = box[0], box[1], box[2] - box[0], box[3] - box[1]
+        # x, y, width, height = box[0], box[1], box[2] - box[0], box[3] - box[1]
+        x, y, width, height = box[0], box[1], box[2], box[3]
         rect = patches.Rectangle((x, y),
                                  width, height,
                                  linewidth=2,
