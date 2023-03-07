@@ -208,7 +208,7 @@ def convert_points_2_two(rois: Tensor):
     maxX = torch.unsqueeze(torch.amax(rois[:, :, 0], 1), dim=-1)
     maxY = torch.unsqueeze(torch.amax(rois[:, :, 1], 1), dim=-1)
 
-    return torch.hstack((minX, minY, maxX-minX, maxY-minY))
+    return torch.hstack((minX, minY, maxX, maxY))
 
 
 def get_line_between(p1, p2):
