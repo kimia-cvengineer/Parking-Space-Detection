@@ -141,7 +141,7 @@ def get_all_possible_num_of_workers(ds):
 
 
 def filter_boxes(rois, areas, threshold):
-    boxes = rois.copy()
+    boxes = rois.clone()
     idx = 0
     for roi, area in zip(rois, areas):
         if area < threshold:
