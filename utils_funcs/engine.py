@@ -161,7 +161,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
 
 
     # construct an SGD optimizer
-    params = [p for p in model.parameters() if p.requires_grad]
+    # params = [p for p in model.parameters() if p.requires_grad]
     # optimizer = torch.optim.SGD(params, lr=lr,
     #                             momentum=0.9, weight_decay=0.0005)
     lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10, eta_min=1e-6)
@@ -237,6 +237,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
 
 
 def create_logs_header(model_dir):
+    print("creating file headers in ", model_dir)
     with open(f'{model_dir}/logs.txt', 'w', newline='\n', encoding='utf-8') as f:
         f.write("*********** training step ***********" + '\n')
 
@@ -254,11 +255,13 @@ def get_metric_epoch_losses(metric_logger):
 
 
 def save_metric_losses(log_file, metric_loss):
+    print("save training losses in ", log_file)
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
         f.write(
             f'{metric_loss[0]},{metric_loss[1]},{metric_loss[2]},{metric_loss[3]},{metric_loss[4]}\n')
 
 
 def save_evaluation_results(log_file, mAPs):
+    print("save evaluation losses in ", log_file)
     with open(log_file, 'a', newline='\n', encoding='utf-8') as f:
         f.write(f'{mAPs[0]:.3f},{mAPs[1]:.3f}\n')
