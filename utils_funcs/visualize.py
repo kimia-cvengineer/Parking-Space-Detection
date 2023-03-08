@@ -129,8 +129,8 @@ def plot_img_bbox(img, target):
         a.add_patch(rect)
 
     print("area = ", target['area'])
-    print("min area = ", torch.min(target['area'], 1))
-    print("max area = ", torch.max(target['area'], 1))
+    print("min area = ", torch.min(target['area']))
+    print("max area = ", torch.max(target['area']))
     plt.show()
 
 
