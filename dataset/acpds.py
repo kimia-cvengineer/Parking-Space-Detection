@@ -2,6 +2,7 @@ import json
 from time import time
 import multiprocessing as mp
 
+import numpy
 import torch
 import torchvision
 import torchvision.transforms as T
@@ -145,4 +146,4 @@ def filter_boxes(rois, areas, threshold):
     for roi, area in zip(rois, areas):
         if area.item() > threshold:
             boxes.append(roi)
-    return boxes
+    return numpy.array(boxes)
