@@ -146,7 +146,7 @@ def filter_boxes(rois, areas, threshold):
     print("rois:", rois)
     for roi, area in zip(rois, areas):
         if area.item() > threshold:
-            boxes.append(roi.item())
+            boxes.append(roi.tolist())
 
     print("boxes: ", boxes)
     return torch.tensor(boxes)
