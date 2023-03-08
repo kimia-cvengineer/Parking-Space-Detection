@@ -55,7 +55,7 @@ class FasterRCNN_FPN(nn.Module):
 def create_model():
     # load a model pre-trained on COCO
     model = fasterrcnn_resnet50_fpn(weights='DEFAULT')
-    # model = fasterrcnn_resnet50_fpn_v2(weights='DEFAULT')
+    model = fasterrcnn_resnet50_fpn_v2(weights='DEFAULT')
 
     # replace the classifier with a new one, that has
     # num_classes which is user-defined
