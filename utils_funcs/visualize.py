@@ -128,9 +128,9 @@ def plot_img_bbox(img, target):
         # Draw the bounding box on top of the image
         a.add_patch(rect)
 
-    print("area = ", target['area'])
-    print("min area = ", torch.min(target['area']))
-    print("max area = ", torch.max(target['area']))
+    # print("area = ", target['area'])
+    # print("min area = ", torch.min(target['area']))
+    # print("max area = ", torch.max(target['area']))
     plt.show()
 
 

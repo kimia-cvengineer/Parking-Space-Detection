@@ -78,7 +78,7 @@ class ACPDS():
         # area = torch.tensor(range(rois.shape[0]))
 
         # filter out small rois
-        # rois = filter_boxes(rois, area, threshold=)
+        rois = filter_boxes(rois, area, threshold=3200)
 
         # suppose all instances are not crowd
         iscrowd = torch.zeros((rois.shape[0],), dtype=torch.int64)
@@ -145,7 +145,8 @@ def filter_boxes(rois, areas, threshold):
     idx = 0
     for roi, area in zip(rois, areas):
         if area < threshold:
-            boxes = boxes.delete(boxes, idx, axis=0)
+            boxes = torch.cat([boxes[:idx], boxes[idx+1:]])
         idx += 1
 
     return boxes
+
