@@ -143,7 +143,8 @@ def get_all_possible_num_of_workers(ds):
 
 def filter_boxes(rois, areas, threshold):
     boxes = []
+    print("rois:", rois)
     for roi, area in zip(rois, areas):
         if area.item() > threshold:
             boxes.append(roi)
-    return numpy.array(boxes)
+    return torch.tensor(boxes)
