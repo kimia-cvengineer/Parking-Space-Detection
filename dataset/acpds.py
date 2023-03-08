@@ -20,6 +20,7 @@ class ACPDS():
     parking space coordinates (ROIs), and occupancies.
     Returns the tuple (image, rois, occupancy).
     """
+
     def __init__(self, dataset_path, ds_type='train', res=None, transform=None):
         self.dataset_path = dataset_path
         self.ds_type = ds_type
@@ -38,7 +39,7 @@ class ACPDS():
             # select all annotations
             assert ds_type == 'all'
             # if using all annotations, combine the train, valid, and test dicts
-            annotations = {k:[] for k in all_annotations['train'].keys()}
+            annotations = {k: [] for k in all_annotations['train'].keys()}
             for ds_type in ['train', 'valid', 'test']:
                 for k, v in all_annotations[ds_type].items():
                     annotations[k] += v
@@ -54,7 +55,7 @@ class ACPDS():
         image = torchvision.io.read_image(image_path)
         if self.res is not None:
             image = TF.resize(image, self.res)
-            
+
         # load occupancy
         occupancy = self.occupancy_list[idx]
         occupancy = torch.tensor(occupancy, dtype=torch.int64)
@@ -75,6 +76,9 @@ class ACPDS():
         # getting the areas of the boxes
         area = (rois[:, 3] - rois[:, 1]) * (rois[:, 2] - rois[:, 0])
         # area = torch.tensor(range(rois.shape[0]))
+
+        # filter out small rois
+        # rois = filter_boxes(rois, area, threshold=)
 
         # suppose all instances are not crowd
         iscrowd = torch.zeros((rois.shape[0],), dtype=torch.int64)
@@ -97,7 +101,7 @@ class ACPDS():
             target['boxes'] = torch.Tensor(sample['bboxes'])
 
         return image, target
-    
+
     def __len__(self):
         return len(self.fname_list)
 
@@ -124,12 +128,24 @@ def create_datasets(dataset_path, batch_size, *args, **kwargs):
     data_loader_test = DataLoader(ds_test, batch_size=batch_size, shuffle=False, collate_fn=utils.collate_fn)
     return data_loader_train, data_loader_valid, data_loader_test
 
+
 def get_all_possible_num_of_workers(ds):
     for num_workers in range(2, mp.cpu_count(), 2):
-        train_loader = DataLoader(ds,shuffle=True,num_workers=num_workers,batch_size=64,pin_memory=True)
+        train_loader = DataLoader(ds, shuffle=True, num_workers=num_workers, batch_size=64, pin_memory=True)
         start = time()
         for epoch in range(1, 3):
             for i, data in enumerate(train_loader, 0):
                 pass
         end = time()
         print("Finish with:{} second, num_workers={}".format(end - start, num_workers))
+
+
+def filter_boxes(rois, areas, threshold):
+    boxes = rois.copy()
+    idx = 0
+    for roi, area in zip(rois, areas):
+        if area < threshold:
+            boxes = boxes.delete(boxes, idx, axis=0)
+        idx += 1
+
+    return boxes
