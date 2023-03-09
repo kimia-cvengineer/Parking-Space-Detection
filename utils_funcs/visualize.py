@@ -158,8 +158,9 @@ def show_predictions(model, model_path, ds, device, num_images=4):
                 break
             with torch.no_grad():
                 prediction = model([image.to(device)])[0]
+            print("preds: ", prediction)
             print('predicted #boxes: ', len(prediction['labels']))
             print('real #boxes: ', len(target['labels']))
-            plot_img_bbox(image, prediction, title='Original boxes')
-            plot_img_bbox(image, target, title='Predicted boxes')
+            plot_img_bbox(image, target, title='Original boxes')
+            plot_img_bbox(image, prediction, title='Predicted boxes')
         i += 1
