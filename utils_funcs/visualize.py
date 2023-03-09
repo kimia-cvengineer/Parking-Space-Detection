@@ -6,6 +6,8 @@ from matplotlib import patches
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection, LineCollection
 
+from utils_funcs import transforms
+
 
 def image_pt_to_np(image):
     """
@@ -143,11 +145,12 @@ def plot_log_per_epoch(epochs, values, y_label):
     plt.show()
 
 
-def show_predictions(model, model_path, data_loader, device):
+def show_predictions(model, model_path, ds, device):
     model.load_state_dict(torch.load(model_path))
     model.eval()
 
-    for image_batch, target_batch in data_loader:
+    for image_batch, target_batch in ds:
+        image_batch, _ = transforms.preprocess(image_batch)
         for image, target in zip(image_batch, target_batch):
             prediction = model([image.to(device)])[0]
             pred_boxes = prediction['boxes']
