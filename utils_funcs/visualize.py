@@ -145,6 +145,20 @@ def plot_log_per_epoch(epochs, values, y_label):
     plt.show()
 
 
+# the function takes the original prediction and the iou threshold.
+
+def apply_nms(orig_prediction, iou_thresh=0.3):
+    # torchvision returns the indices of the bboxes to keep
+    keep = torchvision.ops.nms(orig_prediction['boxes'], orig_prediction['scores'], iou_thresh)
+
+    final_prediction = orig_prediction
+    final_prediction['boxes'] = final_prediction['boxes'][keep]
+    final_prediction['scores'] = final_prediction['scores'][keep]
+    final_prediction['labels'] = final_prediction['labels'][keep]
+
+    return final_prediction
+
+
 def show_predictions(model, model_path, ds, device, num_images=4):
     model.load_state_dict(torch.load(model_path))
     model.eval()
@@ -161,6 +175,8 @@ def show_predictions(model, model_path, ds, device, num_images=4):
             print("preds: ", prediction)
             print('predicted #boxes: ', len(prediction['labels']))
             print('real #boxes: ', len(target['labels']))
+            nms_prediction = apply_nms(prediction, iou_thresh=0.2)
+            print('NMS APPLIED MODEL OUTPUT')
             plot_img_bbox(image, target, title='Original boxes')
-            plot_img_bbox(image, prediction, title='Predicted boxes')
+            plot_img_bbox(image, nms_prediction, title='Predicted boxes')
         i += 1
