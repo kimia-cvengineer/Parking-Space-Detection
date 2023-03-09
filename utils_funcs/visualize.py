@@ -145,16 +145,21 @@ def plot_log_per_epoch(epochs, values, y_label):
     plt.show()
 
 
-def show_predictions(model, model_path, ds, device):
+def show_predictions(model, model_path, ds, device, num_images=4):
     model.load_state_dict(torch.load(model_path))
     model.eval()
 
+    i = 0
     for image_batch, target_batch in ds:
         image_batch, _ = transforms.preprocess(image_batch, device=device)
         for image, target in zip(image_batch, target_batch):
+            if i == num_images // len(ds):
+                i -= 1
+                break
             with torch.no_grad():
                 prediction = model([image.to(device)])[0]
             print('predicted #boxes: ', len(prediction['labels']))
             print('real #boxes: ', len(target['labels']))
             plot_img_bbox(image, prediction, title='Original boxes')
             plot_img_bbox(image, target, title='Predicted boxes')
+        i += 1
