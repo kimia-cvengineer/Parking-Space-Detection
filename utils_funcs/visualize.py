@@ -110,7 +110,7 @@ def plot_ds_image(image, rois, occupancy, true_occupancy=None, fname=None, show=
 
 
 # Function to visualize bounding boxes in the image
-def plot_img_bbox(img, target):
+def plot_img_bbox(img, target, title=None):
     # plot the image and bboxes
     # Bounding boxes are defined as follows: x-min y-min width height
     fig, a = plt.subplots(figsize=[12, 8])
@@ -131,6 +131,8 @@ def plot_img_bbox(img, target):
     # print("area = ", target['area'])
     # print("min area = ", torch.min(target['area']))
     # print("max area = ", torch.max(target['area']))
+    if title is not None:
+        plt.title(title)
     plt.show()
 
 
@@ -139,3 +141,17 @@ def plot_log_per_epoch(epochs, values, y_label):
     plt.xlabel('Epochs')
     plt.ylabel(y_label)
     plt.show()
+
+
+def show_predictions(model, model_path, data_loader, device):
+    model.load_state_dict(torch.load(model_path))
+    model.eval()
+
+    for image_batch, target_batch in data_loader:
+        for image, target in zip(image_batch, target_batch):
+            prediction = model([image.to(device)])[0]
+            pred_boxes = prediction['boxes']
+            print('predicted #boxes: ', len(prediction['labels']))
+            print('real #boxes: ', len(target['labels']))
+            plot_img_bbox(image, pred_boxes, title='Original boxes')
+            plot_img_bbox(image, target, title='Predicted boxes')
