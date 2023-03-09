@@ -152,8 +152,8 @@ def show_predictions(model, model_path, ds, device):
     for image_batch, target_batch in ds:
         image_batch, _ = transforms.preprocess(image_batch, device=device)
         for image, target in zip(image_batch, target_batch):
-            prediction = model([image.to(device)])[0]
-            pred_boxes = prediction['boxes']
+            with torch.no_grad():
+                prediction = model([image.to(device)])[0]
             print('predicted #boxes: ', len(prediction['labels']))
             print('real #boxes: ', len(target['labels']))
             plot_img_bbox(image, prediction, title='Original boxes')
