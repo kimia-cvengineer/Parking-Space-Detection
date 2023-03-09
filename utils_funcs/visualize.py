@@ -159,7 +159,7 @@ def apply_nms(orig_prediction, iou_thresh=0.3):
     return final_prediction
 
 
-def show_predictions(model, model_path, ds, device, num_images=4):
+def show_predictions(model, model_path, ds, device, num_images=4, iou_thresh=0.2):
     model.load_state_dict(torch.load(model_path))
     model.eval()
 
@@ -175,8 +175,9 @@ def show_predictions(model, model_path, ds, device, num_images=4):
             print("preds: ", prediction)
             print('predicted #boxes: ', len(prediction['labels']))
             print('real #boxes: ', len(target['labels']))
-            nms_prediction = apply_nms(prediction, iou_thresh=0.2)
+            nms_prediction = apply_nms(prediction, iou_thresh=iou_thresh)
             print('NMS APPLIED MODEL OUTPUT')
+            print('predicted #boxes: ', len(prediction['labels']))
             plot_img_bbox(image, target, title='Original boxes')
             plot_img_bbox(image, nms_prediction, title='Predicted boxes')
         i += 1
