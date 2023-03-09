@@ -156,5 +156,5 @@ def show_predictions(model, model_path, ds, device):
             pred_boxes = prediction['boxes']
             print('predicted #boxes: ', len(prediction['labels']))
             print('real #boxes: ', len(target['labels']))
-            plot_img_bbox(image, pred_boxes, title='Original boxes')
+            plot_img_bbox(image, prediction, title='Original boxes')
             plot_img_bbox(image, target, title='Predicted boxes')
