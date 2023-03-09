@@ -217,7 +217,7 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
         save_evaluation_results(f'{model_dir}/evaluation_result.csv', epoch_mAPs)
 
         # save weights
-        torch.save(model.state_dict(), f'{model_dir}/weights_last_epoch.pt')
+        torch.save(model.state_dict(), f'{model_dir}/weights_epoch_{epoch}.pt')
 
     # Plot training losses
     plot_log_per_epoch(range(1, epochs + 1), [round(loss[0], 3) for loss in losses], "Losses")
