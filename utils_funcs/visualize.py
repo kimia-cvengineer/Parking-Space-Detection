@@ -160,7 +160,7 @@ def apply_nms(orig_prediction, iou_thresh=0.3):
 
 
 def show_predictions(model, model_path, ds, device, num_images=4, iou_thresh=0.2):
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, map_location=device))
     model.eval()
 
     i = 0
