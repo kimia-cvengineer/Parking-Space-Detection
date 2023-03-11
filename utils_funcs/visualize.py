@@ -165,6 +165,8 @@ def show_predictions(model, model_path, ds, device, num_images=4, iou_thresh=0.2
 
     i = 0
     for image_batch, target_batch in ds:
+        if i == num_images:
+            break
         image_batch, _ = transforms.preprocess(image_batch, device=device)
         for image, target in zip(image_batch, target_batch):
             if i == num_images // len(ds):
