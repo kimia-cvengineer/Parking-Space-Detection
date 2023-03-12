@@ -14,7 +14,7 @@ from albumentations.pytorch import ToTensorV2
 from torchvision import transforms as transforms
 
 '''
-Due to Yuchen's unfamiliarity with pytorch, some codes were code adapted from: https://debuggercafe.com/apple-scab-detection-using-pytorch-faster-rcnn/
+Due to Yuchen's unfamiliarity with pytorch, some codes were code adapted from: https://github.com/sovit-123/fasterrcnn-pytorch-training-pipeline
 Yuchen had made sure she understood every part of the original code and tried her best to modify them
 '''
 
