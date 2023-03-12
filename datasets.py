@@ -10,7 +10,6 @@ from PIL import Image
 
 from torch.utils.data import Dataset, DataLoader
 import albumentations
-from albumentations.pytorch import ToTensorV2
 from torchvision import transforms as transforms
 
 '''
