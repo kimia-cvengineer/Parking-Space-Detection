@@ -16,8 +16,7 @@ import pandas as pd
 
 '''
 Codes adapted from: 
-https://debuggercafe.com/apple-scab-detection-using-pytorch-faster-rcnn/
-https://github.com/pytorch/vision/blob/main/references/detection/train.py
+https://github.com/sovit-123/fasterrcnn-pytorch-training-pipeline
 '''
 
 torch.multiprocessing.set_sharing_strategy('file_system')
@@ -40,7 +39,7 @@ def main(args):
     os.makedirs(OUT_DIR, exist_ok=True)
 
     # Load data config
-    with open('/home/yuchen/venv/Faster_RCNN/data_configs/handicap.yaml') as file:
+    with open('/home/yuchen/venv/Faster_RCNN/handicap.yaml') as file:
         data_configs = yaml.safe_load(file)
     
     # set parameters and other info
