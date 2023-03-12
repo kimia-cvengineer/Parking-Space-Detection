@@ -1,5 +1,9 @@
 import json
-import os
+import numpy as np
+import shapely
+import math
+
+import torch
 from PIL import Image
 
 
@@ -51,13 +55,15 @@ def convert2coco(file_names, rois_list, label_list, save_path):
         "categories": []
     }
 
+    # Open an image and get its width and height
+    # all images are of the same W, H
+    with Image.open("./data/images/" + file_names[0]) as img:
+        width, height = img.size
+
+
     # Loop through each image folder
     i = 0
     for fname, rois, labels in zip(file_names, rois_list, label_list):
-
-        # Open image and get its width and height
-        with Image.open("./data/images/" + fname) as img:
-            width, height = img.size
 
         # Add image information to COCO dataset
         coco_dataset["images"].append({
@@ -72,12 +78,17 @@ def convert2coco(file_names, rois_list, label_list, save_path):
             # If category label is new, add it to category dictionary
             category_id = 1 if label else 0
 
+            # Un-normalize points to the size of the img
+            roi = np.array(roi)
+            roi[..., 0] *= (width - 1)
+            roi[..., 1] *= (height - 1)
+
             # Add annotation information to COCO dataset
             coco_dataset["annotations"].append({
                 "id": len(coco_dataset["annotations"]),
                 "image_id": i,
                 "category_id": category_id,
-                "bbox": roi,  # TODO make it like (x, y, w, h, theta)
+                "bbox": get_rotatedbox(roi),  # TODO make it like (x, y, w, h, theta)
                 "area": polygon_area(roi),
                 "iscrowd": 1
             })
@@ -107,11 +118,71 @@ def polygon_area(poly):
     for i in range(n):
         j = (i + 1) % n
         area += poly[i][0] * poly[j][1] - poly[j][0] * poly[i][1]
-    return abs(area) / 2.0
+    return round(abs(area) / 2.0, 2)
 
 
-if __name__=='__main__':
+def get_rotatedbox(roi):
+    reg_box = _irregularbox_2_rectangularbox(roi)
+    rotated_box = _corners2rotatedbbox(reg_box)
+    return rotated_box
+
+
+def _convert_points_2_8(W, H, rois):
+    return torch.flatten(rois, start_dim=1)
+
+
+def _irregularbox_2_rectangularbox(corners):
+    rect = shapely.MultiPoint(corners).minimum_rotated_rectangle
+    coords = [(round(x, 2), round(y, 2)) for x, y in rect.exterior.coords]
+    return coords
+
+
+def _corners2rotatedbbox(corners):
+    centre = np.mean(np.array(corners), 0)
+    theta = calc_bearing(corners[0], corners[1])
+    theta = math.radians(theta)
+    rotation = np.array([[np.cos(theta), -np.sin(theta)],
+                         [np.sin(theta), np.cos(theta)]])
+    out_points = np.matmul(corners - centre, rotation) + centre
+    x, y = list(out_points[0, :])
+    # w, h = list(out_points[2, :] - out_points[0, :])
+    # print(f"w , h : {w}, {h}")
+
+    # Find the minimum and maximum x and y coordinates of the rotated vertices
+    min_x = min(out_points[:, 0])
+    max_x = max(out_points[:, 0])
+    min_y = min(out_points[:, 1])
+    max_y = max(out_points[:, 1])
+
+    # Calculate the width and height of the rotated rectangle
+    w = max_x - min_x
+    h = max_y - min_y
+    return [x, y, w, h, theta]
+
+
+def calc_bearing(p1, p2):
+    (x1, y1) = p1
+    (x2, y2) = p2
+    # Calculate the angle in radians using arctan2
+    angle = math.atan2(x2 - x1, y2 - y1)
+
+    # Convert the angle to degrees and normalize it to the range [-90, 90]
+    angle_degrees = math.degrees(angle)
+
+    # Return the angle in degrees
+    return angle_degrees
+
+
+if __name__ == '__main__':
     # Generate train ds
     fname_list, rois_list, occupancy_list = load_data("./data", 'train')
     convert2coco(fname_list, rois_list, occupancy_list, "./data/train.json")
 
+    # Generate test ds
+    fname_list, rois_list, occupancy_list = load_data("./data", 'valid')
+    convert2coco(fname_list, rois_list, occupancy_list, "./data/valid.json")
+
+    fname_list, rois_list, occupancy_list = load_data("./data", 'test')
+    convert2coco(fname_list, rois_list, occupancy_list, "./data/test.json")
+
+    # print(get_rotatedbox([(0,0),(1,1),(2,0.5)]))
