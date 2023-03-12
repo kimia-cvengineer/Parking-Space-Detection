@@ -17,7 +17,7 @@ import pandas as pd
 '''
 Codes adapted from: 
 https://debuggercafe.com/apple-scab-detection-using-pytorch-faster-rcnn/
- https://github.com/pytorch/vision/blob/main/references/detection/train.py
+https://github.com/pytorch/vision/blob/main/references/detection/train.py
 '''
 
 torch.multiprocessing.set_sharing_strategy('file_system')
