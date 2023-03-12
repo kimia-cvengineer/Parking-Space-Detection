@@ -4,7 +4,6 @@ import os
 import torch
 import torch.utils.data
 import torchvision
-# import transforms as T
 from pycocotools import mask as coco_mask
 from pycocotools.coco import COCO
 
@@ -222,7 +221,6 @@ def get_coco(root, image_set, transforms, mode="instances"):
     PATHS = {
         "train": ("train2017", os.path.join("annotations", anno_file_template.format(mode, "train"))),
         "val": ("val2017", os.path.join("annotations", anno_file_template.format(mode, "val"))),
-        # "train": ("val2017", os.path.join("annotations", anno_file_template.format(mode, "val")))
     }
 
     t = [ConvertCocoPolysToMask()]
@@ -239,8 +237,6 @@ def get_coco(root, image_set, transforms, mode="instances"):
 
     if image_set == "train":
         dataset = _coco_remove_images_without_annotations(dataset)
-
-    # dataset = torch.utils.data.Subset(dataset, [i for i in range(500)])
 
     return dataset
 
