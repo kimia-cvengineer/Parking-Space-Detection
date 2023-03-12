@@ -15,7 +15,6 @@ def train_one_epoch(
     data_loader, 
     device, 
     epoch, 
-#     train_loss_hist,
     print_freq, 
     scaler=None,
     scheduler=None
@@ -81,7 +80,6 @@ def train_one_epoch(
         batch_loss_box_reg_list.append(loss_dict_reduced['loss_box_reg'].detach().cpu())
         batch_loss_objectness_list.append(loss_dict_reduced['loss_objectness'].detach().cpu())
         batch_loss_rpn_list.append(loss_dict_reduced['loss_rpn_box_reg'].detach().cpu())
-#         train_loss_hist.send(loss_value)
 
         if scheduler is not None:
             scheduler.step(epoch + (step_counter/len(data_loader)))
@@ -106,10 +104,8 @@ def evaluate(
     model, 
     data_loader, 
     device, 
-#     save_valid_preds=False,
     out_dir=None,
     classes=None,
-#     colors=None
 ):
     n_threads = torch.get_num_threads()
     torch.set_num_threads(1)
@@ -122,9 +118,7 @@ def evaluate(
     iou_types = _get_iou_types(model)
     coco_evaluator = CocoEvaluator(coco, iou_types)
 
-#     counter = 0
     for images, targets in metric_logger.log_every(data_loader, 100, header):
-#         counter += 1
         images = list(img.to(device) for img in images)
 
         if torch.cuda.is_available():
@@ -141,14 +135,6 @@ def evaluate(
         evaluator_time = time.time() - evaluator_time
         metric_logger.update(model_time=model_time, evaluator_time=evaluator_time)
 
-#         if save_valid_preds and counter == 1:
-#             # The validation prediction image which is saved to disk
-#             # is returned here which is again returned at the end of the
-#             # function for WandB logging.
-#             val_saved_image = save_validation_results(
-#                 images, outputs, counter, out_dir, classes, colors
-#             )
-
     # gather the stats from all processes
     metric_logger.synchronize_between_processes()
     print("Averaged stats:", metric_logger)
@@ -160,4 +146,3 @@ def evaluate(
     stats = coco_evaluator.summarize()
     torch.set_num_threads(n_threads)
     return coco_evaluator, stats
-#     return coco_evaluator, stats, val_saved_image
