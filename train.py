@@ -21,8 +21,6 @@ https://github.com/sovit-123/fasterrcnn-pytorch-training-pipeline
 
 torch.multiprocessing.set_sharing_strategy('file_system')
 
-np.random.seed(42)
-
 def parse_opt():
     parser = argparse.ArgumentParser()
     parser.add_argument('--epochs', default=25, type=int)
@@ -38,7 +36,7 @@ def main(args):
     OUT_DIR = "outputs/" + str(args['name'])
     os.makedirs(OUT_DIR, exist_ok=True)
 
-    # Load data config
+    # load data config
     with open('/home/yuchen/venv/Faster_RCNN/handicap.yaml') as file:
         data_configs = yaml.safe_load(file)
     
@@ -91,7 +89,7 @@ def main(args):
     console.setLevel(logging.INFO)
     logging.getLogger().addHandler(console)
     
-    # initilize mAP
+    # initilize best mAP scores
     val_map_05 = []
     val_map_05095 = []
     
@@ -101,14 +99,15 @@ def main(args):
     # train
     for epoch in range(NUM_EPOCHS):
 
-        # note: my dataset is in pascal_voc format, and train_one_epoch converts it to coco format 
+        # note: these two functions are directly borrowed from torchvision library https://github.com/pytorch/vision/blob/main/references/detection/engine.py
+        # my dataset is in pascal_voc format, and train_one_epoch() converts it to coco format 
         train_one_epoch(model, optimizer, train_loader, DEVICE, epoch, print_freq=100,scheduler=scheduler)
         coco_evaluator, stats = evaluate(model, valid_loader, device=DEVICE,out_dir=OUT_DIR,classes=CLASSES)
 
         val_map_05.append(stats[1])
         val_map_05095.append(stats[0])
 
-        # store the best model (best 0.5mAP - I also tried to store the bext 0.5:0.95mAP model, but it didn't work very well)
+        # store the best model (best 0.5mAP) - I also tried to store the best 0.5:0.95mAP model, but it didn't work very well
         if val_map_05[-1] > best_mAP_05:
             best_mAP_05095 = val_map_05095[-1]
             best_mAP_05 = val_map_05[-1]
