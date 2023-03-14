@@ -39,7 +39,7 @@ class custom_dataset(Dataset):
         
         # pre-process images and load label path
         image_path = os.path.join(self.images_path, self.all_images[index])
-        annot_file_path = os.path.join(self.labels_path, image_path[:-4] + '.xml')
+        annot_file_path = os.path.join(self.labels_path, self.all_images[index][:-4] + '.xml')
         
         image = cv2.cvtColor(cv2.imread(image_path), cv2.COLOR_BGR2RGB).astype(np.float32)
         image_resized = cv2.resize(image, (self.width, self.height)) / 255.0
