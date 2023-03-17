@@ -49,7 +49,11 @@ class ACPDS():
         self.images = annotations['images']
         self.annotations = annotations['annotations']
         self.img_ids = self.coco.getImgIds()
-        # self.occupancy_list = annotations['occupancy_list']
+        self.cat_ids = self.coco.getCatIds()
+        self.cat2label = {
+            cat_id: i + 1
+            for i, cat_id in enumerate(self.cat_ids)
+        }
 
     @lru_cache(maxsize=None)
     def __getitem__(self, idx):
@@ -59,31 +63,17 @@ class ACPDS():
         # if self.res is not None:
         #     image = TF.resize(image, self.res)
 
-        # load occupancy
-        # occupancy = self.occupancy_list[idx]
-        # occupancy = torch.tensor(occupancy, dtype=torch.int64)
-
         img_id = self.img_ids[idx]
-        anns_obj = self.coco.loadAnns(self.coco.getAnnIds(img_id))
-
-        #Load mask
-        masks = [self.coco.annToMask(ann) for ann in anns_obj]
-        # For speed
-        masks = numpy.array(masks)
+        ann_ids = self.coco.getAnnIds(imgIds=[img_id])
+        ann_info = self.coco.loadAnns(ann_ids)
 
         # load annotations
-        boxes, labels = [], []
-        for ann in self.annotations:
-            if ann['image_id'] == idx:
-                # for key, val in ann.items():
-                #     if key == ('image_id' or 'id'):
-                #         continue
-                boxes.append(ann['bbox'])
-                labels.append(ann['category_id'])
-                # masks.append(ann['segmentation'])
-
-
-        # C, H, W = image.shape
+        boxes, labels, masks, areas = [], [], [], []
+        for ann in ann_info:
+            boxes.append(ann['bbox'])
+            labels.append(ann['category_id'])
+            areas.append(ann['area'])
+            masks.append(self.coco.annToMask(ann))
 
         # Project quadrilaterals to minimum rectangle
         # rois = torch.tensor([calculate_rectangular_coordinates(roi[0], roi[1], roi[2], roi[3]) for roi in rois])
@@ -95,7 +85,7 @@ class ACPDS():
         labels = torch.tensor(labels)
 
         # getting the areas of the boxes
-        area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
+        # area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
 
         # filter out small rois
         # rois = filter_boxes(rois, area, threshold=3200)
@@ -107,7 +97,7 @@ class ACPDS():
         target["boxes"] = boxes
         target["masks"] = masks
         target["labels"] = labels
-        target["area"] = area
+        target["area"] = areas
         target["iscrowd"] = iscrowd
         target["image_id"] = torch.tensor([idx])
 
