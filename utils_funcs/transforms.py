@@ -75,31 +75,59 @@ def prev_augment(images, rois):
 
 
 # Send train=True for training transforms and False for val/test transforms
-def get_transform(train):
+def get_transform(train, res=None):
     # torch.manual_seed(17)
     if train:
-        return Compose([
-            RandomHorizontalFlip(),
-            RandomPhotometricDistort(),
-            # MultiRandomRotation(30)
-            # ToTensorV2 converts image to pytorch tensor without div by 255
-            # ToTensorV2(p=1.0)
-        ])
+        if res is not None:
+            return Compose([
+                RandomHorizontalFlip(),
+                RandomPhotometricDistort(),
+                T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+                T.Resize(res)
+                # MultiRandomRotation(30)
+                # ToTensorV2 converts image to pytorch tensor without div by 255
+                # ToTensorV2(p=1.0)
+            ])
+        else:
+            return Compose([
+                RandomHorizontalFlip(),
+                RandomPhotometricDistort(),
+                T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+                # MultiRandomRotation(30)
+                # ToTensorV2 converts image to pytorch tensor without div by 255
+                # ToTensorV2(p=1.0)
+            ])
     else:
         return Compose([
             # ToTensorV2(p=1.0)
         ])
 
 
-def augment(images, targets):
+def augment(images, targets, res=None):
     new_images, new_targets = list(images), list(targets)
     i = 0
-    transforms = get_transform(True)
+    transforms = get_transform(True, res)
     for img, target in zip(images, targets):
         # if not isinstance(img, numpy.ndarray):
         #     img = img.permute(1, 2, 0).numpy()
+
+        img = img.to(torch.float32) / 255
         new_images[i], new_targets[i] = transforms(image=img,
                                                    target=target)
+        i += 1
+    return new_images, new_targets
+
+
+def resize(images, targets, resolution):
+    new_images, new_targets = list(images), list(targets)
+    i = 0
+    transform = T.Resize(resolution)
+    for img, target in zip(images, targets):
+        # if not isinstance(img, numpy.ndarray):
+        #     img = img.permute(1, 2, 0).numpy()
+        img = img.to(torch.float32) / 255
+        new_images[i], new_targets[i] = transform(image=img,
+                                                  target=target)
         i += 1
     return new_images, new_targets
 

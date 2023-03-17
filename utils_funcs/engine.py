@@ -28,20 +28,21 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         )
     for images, targets in metric_logger.log_every(data_loader, print_freq, log_dir, header):
         # augment data
-        images, targets = transforms.augment(images, targets)
+        images, targets = transforms.augment(images, targets, resolution)
 
         # preprocess image
-        res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
-                                                     res=resolution)
+        # res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
+        #                                              res=resolution)
         # update boxed according to the new resolution
         new_target = []
         for idx, target in enumerate(targets):
-            if resolution is not None:
-                target["boxes"] = torch.tensor(res_rois[idx])
+            # if resolution is not None:
+            #     target["boxes"] = torch.tensor(res_rois[idx])
             new_target.append({k: v.to(device) for k, v in target.items()})
         targets = new_target
         with torch.cuda.amp.autocast(enabled=scaler is not None):
-            loss_dict = model(res_images, targets)
+            loss_dict = model(images, targets)
+            # loss_dict = model(res_images, targets)
             losses = sum(loss for loss in loss_dict.values())
 
         # i = 0
@@ -107,12 +108,14 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     coco_evaluator = CocoEvaluator(coco, iou_types)
     for images, targets in metric_logger.log_every(data_loader, 10, log_dir, header):
         # preprocess image
-        res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
-                                                     res=resolution)
-        # update boxed according to the new resolution
+        # res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
+        #                                              res=resolution)
         if resolution is not None:
-            for idx, target in enumerate(targets):
-                target["boxes"] = torch.tensor(res_rois[idx])
+            res_images, res_rois = transforms.resize(images, targets, resolution)
+        # update boxed according to the new resolution
+        # if resolution is not None:
+        #     for idx, target in enumerate(targets):
+        #         target["boxes"] = torch.tensor(res_rois[idx])
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
