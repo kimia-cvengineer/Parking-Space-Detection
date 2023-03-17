@@ -9,32 +9,15 @@ from albumentations import rotate
 from albumentations.pytorch.transforms import ToTensorV2
 
 
-def preprocess(images, rois=None, device=None, res=None):
+def preprocess_images(images, device=None):
     """
     Resizes, normalizes, and converts image and its corresponding rois to float32.
     """
-    res_images, res_rois = [], []
+    pre_images = []
     for idx, image in enumerate(images):
-        # resize image to model input size
-        if res is not None:
-            _, orig_he, orig_w = image.shape
-            image = TF.resize(image, res)
-            # correct rois for image size given
-            _, new_h, new_w = image.shape
-            if rois is not None:
-                # new_rois = []
-                prev_rois = rois[idx]
-                prev_rois[:, 0::2] *= new_w / orig_w
-                prev_rois[:, 1::2] *= new_h / orig_he
-                # for roi in prev_rois:
-                #     xmin_corr = (roi[0] / prev_w) * new_w
-                #     xmax_corr = (roi[2] / prev_w) * new_w
-                #     ymin_corr = (roi[1] / prev_h) * new_h
-                #     ymax_corr = (roi[3] / prev_h) * new_h
-                #     new_rois.append([xmin_corr, ymin_corr, xmax_corr, ymax_corr])
-
         # convert image to float
-        image = image.to(torch.float32) / 255
+        # image = image.to(torch.float32) / 255
+        image = T.ToTensor()(image)
 
         # normalize image to default torchvision values
         image = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])(image)
@@ -42,9 +25,9 @@ def preprocess(images, rois=None, device=None, res=None):
             image = image.to(device)
         # if res is not None and rois is not None:
         #     res_rois.append(new_rois)
-        res_images.append(image)
+        pre_images.append(image)
 
-    return res_images, rois
+    return pre_images
 
 
 def prev_augment(images, rois):
@@ -80,37 +63,35 @@ def get_transform(train, res=None):
     if train:
         if res is not None:
             return Compose([
-                T.ToTensor(),
                 RandomHorizontalFlip(),
                 RandomPhotometricDistort(),
-                T.Resize(res),
-                T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+                Resize(res),
                 # MultiRandomRotation(30)
                 # ToTensorV2 converts image to pytorch tensor without div by 255
                 # ToTensorV2(p=1.0)
             ])
         else:
             return Compose([
-                T.ToTensor(),
                 RandomHorizontalFlip(),
                 RandomPhotometricDistort(),
-                T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                 # MultiRandomRotation(30)
                 # ToTensorV2 converts image to pytorch tensor without div by 255
                 # ToTensorV2(p=1.0)
             ])
     else:
-        return Compose([
-            T.ToTensor(),
-            T.Resize(res)
-            # ToTensorV2(p=1.0)
-        ])
+        if res is not None:
+            return Compose([
+                Resize(res)
+            ])
+        else:
+            return Compose([
+            ])
 
 
-def augment(images, targets, res=None):
+def augment(images, targets, res=None, train=True):
     new_images, new_targets = list(images), list(targets)
     i = 0
-    transforms = get_transform(True, res)
+    transforms = get_transform(train, res)
     for img, target in zip(images, targets):
         # if not isinstance(img, numpy.ndarray):
         #     img = img.permute(1, 2, 0).numpy()
@@ -120,17 +101,17 @@ def augment(images, targets, res=None):
     return new_images, new_targets
 
 
-def resize(images, targets, resolution):
-    new_images, new_targets = list(images), list(targets)
-    i = 0
-    transform = get_transform(False, resolution)
-    for img, target in zip(images, targets):
-        # if not isinstance(img, numpy.ndarray):
-        #     img = img.permute(1, 2, 0).numpy()
-        new_images[i], new_targets[i] = transform(image=img,
-                                                  target=target)
-        i += 1
-    return new_images, new_targets
+# def resize(images, targets, resolution):
+#     new_images, new_targets = list(images), list(targets)
+#     i = 0
+#     transform = get_transform(False, resolution)
+#     for img, target in zip(images, targets):
+#         # if not isinstance(img, numpy.ndarray):
+#         #     img = img.permute(1, 2, 0).numpy()
+#         new_images[i], new_targets[i] = transform(image=img,
+#                                                   target=target)
+#         i += 1
+#     return new_images, new_targets
 
 
 def random_image_rotation(image, points, max_angle=30.0):
@@ -523,6 +504,51 @@ class ScaleJitter(nn.Module):
         new_height = int(orig_height * r)
 
         image = F.resize(image, [new_height, new_width], interpolation=self.interpolation)
+
+        if target is not None:
+            target["boxes"][:, 0::2] *= new_width / orig_width
+            target["boxes"][:, 1::2] *= new_height / orig_height
+            if "masks" in target:
+                target["masks"] = F.resize(
+                    target["masks"], [new_height, new_width], interpolation=InterpolationMode.NEAREST
+                )
+
+        return image, target
+
+
+class Resize(nn.Module):
+    """Resizes the image and its bounding boxes  within the specified scale range.
+
+    Args:
+        resolution (int): scaling factor interval, e.g (a, b), then scale is randomly sampled from the
+            range a <= scale <= b.
+        interpolation (InterpolationMode): Desired interpolation enum defined by
+            :class:`torchvision.transforms.InterpolationMode`. Default is ``InterpolationMode.BILINEAR``.
+    """
+
+    def __init__(
+            self,
+            resolution: int,
+            interpolation: InterpolationMode = InterpolationMode.BILINEAR,
+    ):
+        super().__init__()
+        self.resolution = resolution
+        self.interpolation = interpolation
+
+    def forward(
+            self, image: Tensor, target: Optional[Dict[str, Tensor]] = None
+    ) -> Tuple[Tensor, Optional[Dict[str, Tensor]]]:
+        if isinstance(image, torch.Tensor):
+            if image.ndimension() not in {2, 3}:
+                raise ValueError(f"image should be 2/3 dimensional. Got {image.ndimension()} dimensions.")
+            elif image.ndimension() == 2:
+                image = image.unsqueeze(0)
+
+        _, orig_height, orig_width = F.get_dimensions(image)
+
+        image = F.resize(image, [self.resolution], interpolation=self.interpolation)
+
+        _, new_width, new_height = F.get_dimensions(image)
 
         if target is not None:
             target["boxes"][:, 0::2] *= new_width / orig_width

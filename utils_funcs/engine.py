@@ -27,6 +27,9 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
             optimizer, start_factor=warmup_factor, total_iters=warmup_iters
         )
     for images, targets in metric_logger.log_every(data_loader, print_freq, log_dir, header):
+        # preprocess images
+        images = transforms.preprocess_images(images, device)
+
         # augment data
         images, targets = transforms.augment(images, targets, resolution)
 
@@ -107,11 +110,15 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     iou_types = _get_iou_types(model)
     coco_evaluator = CocoEvaluator(coco, iou_types)
     for images, targets in metric_logger.log_every(data_loader, 10, log_dir, header):
+        # preprocess images
+        images = transforms.preprocess_images(images, device)
+
+        if resolution is not None:
+            images, targets = transforms.augment(images, targets, resolution, False)
+
         # preprocess image
         # res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
         #                                              res=resolution)
-        if resolution is not None:
-            res_images, res_rois = transforms.resize(images, targets, resolution)
         # update boxed according to the new resolution
         # if resolution is not None:
         #     for idx, target in enumerate(targets):
@@ -120,7 +127,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
         if torch.cuda.is_available():
             torch.cuda.synchronize()
         model_time = time.time()
-        outputs = model(res_images)
+        outputs = model(images)
 
         outputs = [{k: v.to(cpu_device) for k, v in t.items()} for t in outputs]
         model_time = time.time() - model_time
