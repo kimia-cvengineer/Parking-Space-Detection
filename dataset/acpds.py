@@ -112,12 +112,8 @@ class ACPDS():
         target["image_id"] = torch.tensor([idx])
 
         if self.transform:
-            sample = self.transform(image=image,
-                                    bboxes=target['boxes'],
-                                    labels=target['labels'])
-
-            image = sample['image']
-            target['boxes'] = torch.Tensor(sample['bboxes'])
+            image, target = self.transform(image=image,
+                                           target=target)
 
         return image, target
 

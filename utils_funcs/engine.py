@@ -14,6 +14,8 @@ from utils_funcs.visualize import plot_log_per_epoch
 
 
 def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, print_freq, log_dir, scaler=None):
+    resolution = None
+
     model.train()
     metric_logger = utils.MetricLogger(delimiter="  ")
     metric_logger.add_meter("lr", utils.SmoothedValue(window_size=1, fmt="{value:.6f}"))
@@ -113,6 +115,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
         # preprocess images
         images = transforms.preprocess_images(images, device)
 
+        resolution = None
         if resolution is not None:
             images, targets = transforms.augment(images, targets, resolution, False)
 
