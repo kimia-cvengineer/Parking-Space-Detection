@@ -112,7 +112,9 @@ class ACPDS():
         target["image_id"] = torch.tensor([idx])
 
         if self.res is not None:
-            self.transform = transforms.Resize(self.res)
+            resize_transform = transforms.Resize(self.res)
+            image, target = resize_transform(image=image,
+                                           target=target)
 
         if self.transform:
             image, target = self.transform(image=image,
