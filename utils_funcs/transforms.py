@@ -82,8 +82,9 @@ def get_transform(train, res=None):
             return Compose([
                 RandomHorizontalFlip(),
                 RandomPhotometricDistort(),
+                T.Resize(res),
                 T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                T.Resize(res)
+                T.ToTensor()
                 # MultiRandomRotation(30)
                 # ToTensorV2 converts image to pytorch tensor without div by 255
                 # ToTensorV2(p=1.0)
@@ -92,13 +93,16 @@ def get_transform(train, res=None):
             return Compose([
                 RandomHorizontalFlip(),
                 RandomPhotometricDistort(),
-                T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+                T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+                T.ToTensor()
                 # MultiRandomRotation(30)
                 # ToTensorV2 converts image to pytorch tensor without div by 255
                 # ToTensorV2(p=1.0)
             ])
     else:
         return Compose([
+            T.ToTensor(),
+            T.Resize(res)
             # ToTensorV2(p=1.0)
         ])
 
@@ -110,8 +114,6 @@ def augment(images, targets, res=None):
     for img, target in zip(images, targets):
         # if not isinstance(img, numpy.ndarray):
         #     img = img.permute(1, 2, 0).numpy()
-
-        img = img.to(torch.float32) / 255
         new_images[i], new_targets[i] = transforms(image=img,
                                                    target=target)
         i += 1
@@ -121,11 +123,10 @@ def augment(images, targets, res=None):
 def resize(images, targets, resolution):
     new_images, new_targets = list(images), list(targets)
     i = 0
-    transform = T.Resize(resolution)
+    transform = get_transform(False, resolution)
     for img, target in zip(images, targets):
         # if not isinstance(img, numpy.ndarray):
         #     img = img.permute(1, 2, 0).numpy()
-        img = img.to(torch.float32) / 255
         new_images[i], new_targets[i] = transform(image=img,
                                                   target=target)
         i += 1
