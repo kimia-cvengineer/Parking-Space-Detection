@@ -67,7 +67,7 @@ class ACPDS():
         anns_obj = self.coco.loadAnns(self.coco.getAnnIds(img_id))
 
         #Load mask
-        masks = [self.coco.annToMask(ann) for ann in anns_obj]
+        masks = self.coco.annToMask(anns_obj)
 
         # load annotations
         boxes, labels = [], []
