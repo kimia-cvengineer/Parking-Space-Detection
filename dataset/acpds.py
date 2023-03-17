@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from functools import lru_cache
 
 from models.utils.pooling import convert_points_2_two, calculate_rectangular_coordinates
-from utils_funcs import utils
+from utils_funcs import utils, transforms
 from pycocotools.coco import COCO
 
 
@@ -56,8 +56,8 @@ class ACPDS():
         # load image
         image_path = f'{self.dataset_path}/images/{self.images[idx]["file_name"]}'
         image = torchvision.io.read_image(image_path)
-        if self.res is not None:
-            image = TF.resize(image, self.res)
+        # if self.res is not None:
+        #     image = TF.resize(image, self.res)
 
         # load occupancy
         # occupancy = self.occupancy_list[idx]
@@ -110,6 +110,9 @@ class ACPDS():
         target["area"] = area
         target["iscrowd"] = iscrowd
         target["image_id"] = torch.tensor([idx])
+
+        if self.res is not None:
+            self.transform = transforms.Resize(self.res)
 
         if self.transform:
             image, target = self.transform(image=image,
