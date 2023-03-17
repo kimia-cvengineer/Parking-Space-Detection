@@ -13,7 +13,7 @@ from functools import lru_cache
 
 from models.utils.pooling import convert_points_2_two, calculate_rectangular_coordinates
 from utils_funcs import utils
-from collections import defaultdict
+from pycocotools.coco import COCO
 
 
 class ACPDS():
@@ -45,9 +45,10 @@ class ACPDS():
         #     for ds_type in ['train', 'valid', 'test']:
         #         for k, v in all_annotations[ds_type].items():
         #             annotations[k] += v
-
+        self.coco = COCO(f'{self.dataset_path}/{ds_type}.json')
         self.images = annotations['images']
         self.annotations = annotations['annotations']
+        self.img_ids = self.coco.getImgIds()
         # self.occupancy_list = annotations['occupancy_list']
 
     @lru_cache(maxsize=None)
@@ -62,8 +63,14 @@ class ACPDS():
         # occupancy = self.occupancy_list[idx]
         # occupancy = torch.tensor(occupancy, dtype=torch.int64)
 
+        img_id = self.img_ids[idx]
+        anns_obj = self.coco.loadAnns(self.coco.getAnnIds(img_id))
+
+        #Load mask
+        masks = [self.coco.annToMask(ann) for ann in anns_obj]
+
         # load annotations
-        boxes, labels, masks = [], [], []
+        boxes, labels = [], []
         for ann in self.annotations:
             if ann['image_id'] == idx:
                 # for key, val in ann.items():
@@ -71,7 +78,7 @@ class ACPDS():
                 #         continue
                 boxes.append(ann['bbox'])
                 labels.append(ann['category_id'])
-                masks.append(ann['segmentation'])
+                # masks.append(ann['segmentation'])
 
 
         # C, H, W = image.shape
