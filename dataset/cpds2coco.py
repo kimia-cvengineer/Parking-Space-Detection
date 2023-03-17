@@ -129,10 +129,13 @@ def reindex_boxes_ids(file_path):
     idx = 0
     for ann in annotations:
         # ann['id'] = idx
-        bbox = ann['bbox']
-        ann['bbox'] = [bbox[0], bbox[1], bbox[0] + bbox[2], bbox[1] + bbox[3]]
+        bbox = np.array(ann['bbox'])
+        bbox = bbox.round(decimals=2).tolist()
+        ann['bbox'] = [bbox[0], bbox[1], bbox[0] + bbox[2] - 1, bbox[1] + bbox[3] - 1]
+        segms = np.array(ann['segmentation'])
+        ann['segmentation'] = segms.round(decimals=2).tolist()
         new_annotations.append(ann)
-        # idx += 1
+        idx += 1
 
 
     # COCO dataset format dictionary

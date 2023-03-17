@@ -59,6 +59,7 @@ def create_model():
     # model = fasterrcnn_resnet50_fpn(weights='DEFAULT')
     # model = fasterrcnn_resnet50_fpn_v2(weights='DEFAULT')
     model = maskrcnn_resnet50_fpn(weights=MaskRCNN_ResNet50_FPN_Weights.DEFAULT)
+    model = maskrcnn_resnet50_fpn(weights='DEFAULT')
     # model = maskrcnn_resnet50_fpn_v2(weights=MaskRCNN_ResNet50_FPN_V2_Weights.DEFAULT)
 
     # replace the classifier with a new one, that has
