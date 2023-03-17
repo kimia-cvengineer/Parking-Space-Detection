@@ -548,7 +548,7 @@ class Resize(nn.Module):
 
         image = F.resize(image, [self.resolution], interpolation=self.interpolation)
 
-        _, new_width, new_height = F.get_dimensions(image)
+        _, new_height, new_width = F.get_dimensions(image)
 
         if target is not None:
             target["boxes"][:, 0::2] *= new_width / orig_width
