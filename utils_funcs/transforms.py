@@ -80,21 +80,21 @@ def get_transform(train, res=None):
     if train:
         if res is not None:
             return Compose([
-                # RandomHorizontalFlip(),
-                # RandomPhotometricDistort(),
+                T.ToTensor(),
+                RandomHorizontalFlip(),
+                RandomPhotometricDistort(),
                 T.Resize(res),
-                T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                T.ToTensor()
+                T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
                 # MultiRandomRotation(30)
                 # ToTensorV2 converts image to pytorch tensor without div by 255
                 # ToTensorV2(p=1.0)
             ])
         else:
             return Compose([
+                T.ToTensor(),
                 RandomHorizontalFlip(),
                 RandomPhotometricDistort(),
                 T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-                T.ToTensor()
                 # MultiRandomRotation(30)
                 # ToTensorV2 converts image to pytorch tensor without div by 255
                 # ToTensorV2(p=1.0)
