@@ -16,8 +16,8 @@ def preprocess_images(images, device=None):
     pre_images = []
     for idx, image in enumerate(images):
         # convert image to float
-        # image = image.to(torch.float32) / 255
-        image = T.ToTensor()(image)
+        image = image.to(torch.float32) / 255
+        # image = T.ToTensor()(image)
 
         # normalize image to default torchvision values
         image = T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])(image)
