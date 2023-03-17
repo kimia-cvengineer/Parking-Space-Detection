@@ -80,8 +80,8 @@ def get_transform(train, res=None):
     if train:
         if res is not None:
             return Compose([
-                RandomHorizontalFlip(),
-                RandomPhotometricDistort(),
+                # RandomHorizontalFlip(),
+                # RandomPhotometricDistort(),
                 T.Resize(res),
                 T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
                 T.ToTensor()
