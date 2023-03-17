@@ -64,7 +64,7 @@ class ACPDS():
         #     image = TF.resize(image, self.res)
 
         img_id = self.img_ids[idx]
-        ann_ids = self.coco.getAnnIds(imgIds=[img_id])
+        ann_ids = self.coco.getAnnIds(imgIds=img_id)
         ann_info = self.coco.loadAnns(ann_ids)
 
         # load annotations
@@ -73,7 +73,7 @@ class ACPDS():
             boxes.append(ann['bbox'])
             labels.append(ann['category_id'])
             areas.append(ann['area'])
-            masks.append(self.coco.annToMask([ann]))
+            masks.append(self.coco.annToMask(ann))
 
         # Project quadrilaterals to minimum rectangle
         # rois = torch.tensor([calculate_rectangular_coordinates(roi[0], roi[1], roi[2], roi[3]) for roi in rois])
