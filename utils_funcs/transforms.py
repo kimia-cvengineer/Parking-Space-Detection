@@ -529,7 +529,7 @@ class Resize(nn.Module):
     def __init__(
             self,
             resolution: int,
-            interpolation: InterpolationMode = InterpolationMode.BILINEAR,
+            interpolation: InterpolationMode = InterpolationMode.BICUBIC,
     ):
         super().__init__()
         self.resolution = resolution
