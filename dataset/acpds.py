@@ -68,6 +68,8 @@ class ACPDS():
 
         #Load mask
         masks = [self.coco.annToMask(ann) for ann in anns_obj]
+        # For speed
+        masks = numpy.array(masks)
 
         # load annotations
         boxes, labels = [], []
@@ -88,8 +90,8 @@ class ACPDS():
 
         # rois = convert_points_2_two(rois)
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
-        # masks = torch.as_tensor(masks, dtype=torch.uint8)
-        masks = torch.as_tensor(masks)
+        masks = torch.as_tensor(masks, dtype=torch.uint8)
+        # masks = torch.as_tensor(masks)
         labels = torch.tensor(labels)
 
         # getting the areas of the boxes
