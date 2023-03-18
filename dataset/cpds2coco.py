@@ -123,6 +123,27 @@ def convert2coco(file_names, rois_list, label_list, save_path):
     with open(save_path, "w") as outfile:
         json.dump(coco_dataset, outfile)
 
+def add_bbox_to_annotations(file_path):
+    with open(file_path, 'r') as f:
+        annotations = json.load(f)
+    anns = annotations['anns']
+    new_anns = []
+    start_id = 7842
+    for ann in anns:
+        ann['id'] = start_id
+        roi = ann['segmentation']
+        roi = [(roi[i], roi[i+1]) for i in range(0,7,2)]
+        ann['bbox'] = poly_2_rect4(roi)
+        ann['segmentation'] = [ann['segmentation']]
+        new_anns.append(ann)
+        start_id+=1
+
+    file_name = "testing_" + os.path.basename(file_path)
+    new_path = os.path.dirname(file_path) + "/" + file_name
+    with open(new_path, "w") as outfile:
+        json.dump(new_anns, outfile)
+
+
 
 def reindex_boxes_ids(file_path):
     # load all annotations
@@ -268,19 +289,23 @@ def calc_bearing(p1, p2):
     return angle_degrees
 
 
+
+
 if __name__ == '__main__':
     # Generate train ds
-    fname_list, rois_list, occupancy_list = load_data("./data", 'train')
-    convert2coco(fname_list, rois_list, occupancy_list, "./data/train.json")
-
-    # Generate test ds
-    fname_list, rois_list, occupancy_list = load_data("./data", 'valid')
-    convert2coco(fname_list, rois_list, occupancy_list, "./data/valid.json")
-
-    fname_list, rois_list, occupancy_list = load_data("./data", 'test')
-    convert2coco(fname_list, rois_list, occupancy_list, "./data/test.json")
+    # fname_list, rois_list, occupancy_list = load_data("./data", 'train')
+    # convert2coco(fname_list, rois_list, occupancy_list, "./data/train.json")
+    #
+    # # Generate test ds
+    # fname_list, rois_list, occupancy_list = load_data("./data", 'valid')
+    # convert2coco(fname_list, rois_list, occupancy_list, "./data/valid.json")
+    #
+    # fname_list, rois_list, occupancy_list = load_data("./data", 'test')
+    # convert2coco(fname_list, rois_list, occupancy_list, "./data/test.json")
     # # reindex_boxes_ids("./data/train.json")
     # # reindex_boxes_ids("./data/valid.json")
     # # reindex_boxes_ids("./data/test.json")
     # print(get_rotatedbox([(0,0),(0,3),(2,0),(2,3)]))
+
+    add_bbox_to_annotations("./train_Yuchen.json")
 
