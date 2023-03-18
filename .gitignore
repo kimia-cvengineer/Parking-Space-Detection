@@ -2,5 +2,5 @@
 __pycache__/
 .ipynb_checkpoints
 deprecated/
-dataset/data
+dataset/data/images
 paper/
