@@ -60,8 +60,6 @@ class ACPDS():
         # load image
         image_path = f'{self.dataset_path}/images/{self.images[idx]["file_name"]}'
         image = torchvision.io.read_image(image_path)
-        # if self.res is not None:
-        #     image = TF.resize(image, self.res)
 
         img_id = self.img_ids[idx]
         ann_ids = self.coco.getAnnIds(imgIds=img_id)
@@ -75,22 +73,16 @@ class ACPDS():
             areas.append(ann['area'])
             masks.append(self.coco.annToMask(ann))
 
-        # Project quadrilaterals to minimum rectangle
-        # rois = torch.tensor([calculate_rectangular_coordinates(roi[0], roi[1], roi[2], roi[3]) for roi in rois])
-
         # rois = convert_points_2_two(rois)
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
         masks = torch.as_tensor(masks, dtype=torch.uint8)
         areas = torch.as_tensor(areas)
         labels = torch.tensor(labels)
 
-        # getting the areas of the boxes
-        # area = (boxes[:, 3] - boxes[:, 1]) * (boxes[:, 2] - boxes[:, 0])
+        # Filter out small boxes
+        boxes = filter_boxes(boxes, areas, threshold=3200)
 
-        # filter out small rois
-        # rois = filter_boxes(rois, area, threshold=3200)
-
-        # suppose all instances are not crowd
+        # Suppose all instances are not crowd
         iscrowd = torch.zeros((boxes.shape[0],), dtype=torch.int64)
 
         target = {}
@@ -118,9 +110,8 @@ class ACPDS():
 
 def collate_fn(batch):
     images = [item[0] for item in batch]
-    rois = [item[1] for item in batch]
-    segmentation = [item[2] for item in batch]
-    return [images, rois]
+    targets = [item[1] for item in batch]
+    return [images, targets]
 
 
 def create_datasets(dataset_path, batch_size, *args, **kwargs):
