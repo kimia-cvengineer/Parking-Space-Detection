@@ -154,13 +154,13 @@ def reindex_boxes_ids(file_path):
     new_annotations = []
     idx = 0
     for ann in annotations:
-        # ann['id'] = idx
-        bbox = np.array(ann['bbox'])
-        bbox = bbox.round(decimals=2).tolist()
+        ann['id'] = idx
+        # bbox = np.array(ann['bbox'])
+        # bbox = bbox.round(decimals=2).tolist()
         # ann['bbox'] = [bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]]
         # ann['bbox'] = [bbox[0], bbox[1], bbox[0] + bbox[2] - 1, bbox[1] + bbox[3] - 1]
-        segms = np.array(ann['segmentation'])
-        ann['segmentation'] = segms.round(decimals=2).tolist()
+        # segms = np.array(ann['segmentation'])
+        # ann['segmentation'] = segms.round(decimals=2).tolist()
         new_annotations.append(ann)
         idx += 1
 
@@ -300,7 +300,7 @@ if __name__ == '__main__':
     #
     # fname_list, rois_list, occupancy_list = load_data("./data", 'test')
     # convert2coco(fname_list, rois_list, occupancy_list, "./data/test.json")
-    # # reindex_boxes_ids("./data/train.json")
+    reindex_boxes_ids("./data/train.json")
     # # reindex_boxes_ids("./data/valid.json")
     # # reindex_boxes_ids("./data/test.json")
     print(get_rotatedbox([(0,0),(0,3),(2,0),(2,3)]))
