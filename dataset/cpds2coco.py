@@ -143,8 +143,6 @@ def add_bbox_to_annotations(file_path):
     with open(new_path, "w") as outfile:
         json.dump(new_anns, outfile)
 
-
-
 def reindex_boxes_ids(file_path):
     # load all annotations
     with open(file_path, 'r') as f:
@@ -305,7 +303,7 @@ if __name__ == '__main__':
     # # reindex_boxes_ids("./data/train.json")
     # # reindex_boxes_ids("./data/valid.json")
     # # reindex_boxes_ids("./data/test.json")
-    # print(get_rotatedbox([(0,0),(0,3),(2,0),(2,3)]))
+    print(get_rotatedbox([(0,0),(0,3),(2,0),(2,3)]))
 
-    add_bbox_to_annotations("./train_Yuchen.json")
+    # add_bbox_to_annotations("./train_Yuchen.json")
 

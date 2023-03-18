@@ -175,21 +175,21 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
 
     # construct an SGD optimizer
     # params = [p for p in model.parameters() if p.requires_grad]
-    # optimizer = torch.optim.SGD(params, lr=lr,
-    #                             momentum=0.9, weight_decay=0.0005)
-    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10, eta_min=1e-6)
+    optimizer = torch.optim.SGD(params, lr=lr,
+                                momentum=0.9, weight_decay=0.0005)
+    # lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10, eta_min=1e-10)
     # lr_scheduler = None
     # cosine lr shceduler
     # lr = 8e-5
     # plot losses
     # increase epochs
-    model_dir = f'./{model_dir}/LR_{lr}_{optimizer.__class__.__name__}_{lr_scheduler.__class__.__name__}'
 
     # and a learning rate scheduler which decreases the learning rate by
     # 10x every 3 epochs
-    # lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
-    #                                                step_size=3,
-    #                                                gamma=0.1)
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
+                                                   step_size=3,
+                                                   gamma=0.1)
+    model_dir = f'./{model_dir}/LR_{lr}_{optimizer.__class__.__name__}_{lr_scheduler.__class__.__name__}'
 
     losses, mAP_results = [], []
     # train
