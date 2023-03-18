@@ -74,6 +74,8 @@ def convert2coco(file_names, rois_list, label_list, save_path):
             "height": height
         })
 
+
+
         # Loop through each annotation
         for roi, label in zip(rois, labels):
             # If category label is new, add it to category dictionary
@@ -81,10 +83,15 @@ def convert2coco(file_names, rois_list, label_list, save_path):
 
             # Un-normalize points to the size of the img
             roi = np.array(roi)
+            # if i == 12:
+            #     print(roi)
+            #     print(roi[1])
+            #     print("111")
+            #     print(roi[1][0]*(width - 1))
             roi[..., 0] *= (width - 1)
             roi[..., 1] *= (height - 1)
-            if i == 12:
-                print(flatten(roi))
+            roi = roi.round(2)
+
             rect = poly_2_rect4(roi)
             w, h = rect[2] - rect[0], rect[3] - rect[1]
             # w, h = rect[2], rect[3]
@@ -93,9 +100,9 @@ def convert2coco(file_names, rois_list, label_list, save_path):
                 "id": len(coco_dataset["annotations"]),
                 "image_id": i,
                 "category_id": category_id,
-                "bbox": rect,  # (x, y, w, h)
-                "segmentation": flatten(roi),
-                "area": w * h,
+                "bbox": rect,  # (x1, y1, x2, y2)
+                "segmentation": [flatten(roi)],
+                "area": round(w * h, 2),
                 "iscrowd": 0
             })
 
@@ -131,12 +138,12 @@ def reindex_boxes_ids(file_path):
         # ann['id'] = idx
         bbox = np.array(ann['bbox'])
         bbox = bbox.round(decimals=2).tolist()
-        ann['bbox'] = [bbox[0], bbox[1], bbox[0] + bbox[2] - 1, bbox[1] + bbox[3] - 1]
+        # ann['bbox'] = [bbox[0], bbox[1], bbox[2] - bbox[0], bbox[3] - bbox[1]]
+        # ann['bbox'] = [bbox[0], bbox[1], bbox[0] + bbox[2] - 1, bbox[1] + bbox[3] - 1]
         segms = np.array(ann['segmentation'])
         ann['segmentation'] = segms.round(decimals=2).tolist()
         new_annotations.append(ann)
         idx += 1
-
 
     # COCO dataset format dictionary
     coco_dataset = {
@@ -193,7 +200,7 @@ def polygon_area(poly):
 
 def flatten(roi):
     return [roi[0][0], roi[0][1],
-            roi[2][0], roi[1][1],
+            roi[1][0], roi[1][1],
             roi[2][0], roi[2][1],
             roi[3][0], roi[3][1]]
 
@@ -263,16 +270,17 @@ def calc_bearing(p1, p2):
 
 if __name__ == '__main__':
     # Generate train ds
-    # fname_list, rois_list, occupancy_list = load_data("./data", 'train')
-    # convert2coco(fname_list, rois_list, occupancy_list, "./data/train.json")
-    #
-    # # Generate test ds
-    # fname_list, rois_list, occupancy_list = load_data("./data", 'valid')
-    # convert2coco(fname_list, rois_list, occupancy_list, "./data/valid.json")
-    #
-    # fname_list, rois_list, occupancy_list = load_data("./data", 'test')
-    # convert2coco(fname_list, rois_list, occupancy_list, "./data/test.json")
-    reindex_boxes_ids("./data/train.json")
-    reindex_boxes_ids("./data/valid.json")
-    reindex_boxes_ids("./data/test.json")
+    fname_list, rois_list, occupancy_list = load_data("./data", 'train')
+    convert2coco(fname_list, rois_list, occupancy_list, "./data/train.json")
+
+    # Generate test ds
+    fname_list, rois_list, occupancy_list = load_data("./data", 'valid')
+    convert2coco(fname_list, rois_list, occupancy_list, "./data/valid.json")
+
+    fname_list, rois_list, occupancy_list = load_data("./data", 'test')
+    convert2coco(fname_list, rois_list, occupancy_list, "./data/test.json")
+    # # reindex_boxes_ids("./data/train.json")
+    # # reindex_boxes_ids("./data/valid.json")
+    # # reindex_boxes_ids("./data/test.json")
     # print(get_rotatedbox([(0,0),(0,3),(2,0),(2,3)]))
+
