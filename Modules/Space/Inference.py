@@ -4,6 +4,7 @@ import torch
 import torchvision.transforms as T
 import torchvision
 import numpy as np
+from models import rcnn_fpn as Mask_RCNN
 
 import cv2
 import random
@@ -11,6 +12,12 @@ import warnings
 
 # warnings.filterwarnings('ignore')
 CLASS_NAMES = ['Empty', 'Occupied']
+
+def get_model():
+    # set to evaluation mode
+    model.eval()
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    Mask_RCNN.create_model().to(device)
 
 
 def get_coloured_mask(mask):
