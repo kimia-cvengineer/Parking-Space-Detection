@@ -2,5 +2,6 @@
 __pycache__/
 .ipynb_checkpoints
 deprecated/
-dataset/data/images
+./Modules/Space/dataset/data/images
 paper/
+venv/
