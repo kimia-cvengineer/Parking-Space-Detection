@@ -177,8 +177,8 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
     # params = [p for p in model.parameters() if p.requires_grad]
     # optimizer = torch.optim.SGD(params, lr=lr,
     #                             momentum=0.9, weight_decay=0.0005)
-    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10, eta_min=1e-6)
-    lr_scheduler = None
+    lr_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=10, eta_min=0)
+    # lr_scheduler = None
     # cosine lr shceduler
     # lr = 8e-5
     # plot losses
