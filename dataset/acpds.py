@@ -75,7 +75,7 @@ class ACPDS():
 
         # rois = convert_points_2_two(rois)
         boxes = torch.as_tensor(boxes, dtype=torch.float32)
-        masks = torch.as_tensor(masks, dtype=torch.uint8)
+        masks = torch.as_tensor(numpy.array(masks, dtype=torch.uint8))
         areas = torch.as_tensor(areas)
         labels = torch.tensor(labels)
 
