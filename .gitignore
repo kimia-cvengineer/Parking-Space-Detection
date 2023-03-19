@@ -5,3 +5,4 @@ deprecated/
 ./Modules/Space/dataset/data/images
 paper/
 venv/
+/.idea
