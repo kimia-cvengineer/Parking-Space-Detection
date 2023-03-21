@@ -9,6 +9,7 @@ from matplotlib.collections import PatchCollection, LineCollection
 from utils_funcs import transforms
 from torchvision.utils import make_grid
 import torchvision.transforms as T
+import torchvision.transforms.functional as F
 from torchvision.utils import draw_bounding_boxes
 from torchvision.utils import draw_segmentation_masks
 
