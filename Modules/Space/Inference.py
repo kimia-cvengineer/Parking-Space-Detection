@@ -15,7 +15,7 @@ import warnings
 CLASS_NAMES = ['Empty', 'Occupied']
 
 
-def get_mask_rcnn_model(device):
+def get_mask_rcnn_model(weights, device):
     # set to evaluation mode
     # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model = Mask_RCNN.create_model().to(device)
