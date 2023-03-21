@@ -26,9 +26,9 @@ def get_mask_rcnn_model(weights, device):
 
 
 def predict(model, img_path, device):
-    img = read_image(img_path)
+    img = read_image(img_path) / 255
     # convert image to float
-    img = img.to(torch.float32) / 255
+    # img = img.to(torch.float32) / 255
     img.to(device)
 
     # model = get_model(weights=weights)
