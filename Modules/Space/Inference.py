@@ -2,6 +2,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import torch
 import torchvision.transforms as T
+import torchvision.transforms.functional as F
 import torchvision
 import numpy as np
 from models import rcnn_fpn as Mask_RCNN
@@ -26,7 +27,9 @@ def get_mask_rcnn_model(weights, device):
 
 def predict(model, img_path, device):
     img = read_image(img_path)
+    img = F.to_tensor(img)
     img.to(device)
+
     # model = get_model(weights=weights)
     # model.eval()
     return model([img])
