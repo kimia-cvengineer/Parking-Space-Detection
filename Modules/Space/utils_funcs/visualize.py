@@ -7,6 +7,11 @@ from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection, LineCollection
 
 from utils_funcs import transforms
+from torchvision.utils import make_grid
+from torchvision.io import read_image
+import torchvision.transforms as T
+from torchvision.utils import draw_bounding_boxes
+from torchvision.utils import draw_segmentation_masks
 
 
 def image_pt_to_np(image):
@@ -183,3 +188,54 @@ def show_predictions(model, model_path, ds, device, num_images=4, iou_thresh=0.2
             plot_img_bbox(image, target, title='Original boxes')
             plot_img_bbox(image, nms_prediction, title='Predicted boxes')
         i += 1
+
+
+def filter_model_output(output, score_threshold):
+    filtred_output = list()
+    for image in output:
+        filtred_image = dict()
+        for key in image.keys():
+            filtred_image[key] = image[key][image['scores'] >= score_threshold]
+        filtred_output.append(filtred_image)
+    return filtred_output
+
+
+def get_boolean_mask(output):
+    for index, pred in enumerate(output):
+        output[index]['masks'] = pred['masks'] > 0.5
+        output[index]['masks'] = output[index]['masks'].squeeze(1)
+    return output
+
+
+def show(imgs):
+    if not isinstance(imgs, list):
+        imgs = [imgs]
+    fig, axs = plt.subplots(ncols=len(imgs), squeeze=False, figsize=(12, 12))
+    for i, img in enumerate(imgs):
+        img = img.detach()
+        img = F.to_pil_image(img)
+        axs[0, i].imshow(np.asarray(img))
+        axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
+
+
+def show_mask_predictions(preds, score_threshold=.8):
+    output = filter_model_output(output=preds, score_threshold=score_threshold)
+    output = get_boolean_mask(output)
+    show([
+        draw_segmentation_masks(image, prediction.get('masks'), alpha=0.9)
+        for index, (image, prediction) in enumerate(zip(image_list, output))
+    ])
+
+
+def get_model(weights):
+    # model_path = './MyFRCNN_model_3/LR_0.0001_AdamW_CosineAnnealingLR/weights_epoch_10.pt'
+    model.load_state_dict(torch.load(weights, map_location=device))
+    return model
+
+
+def predict(img_path, device, weights='./MyFRCNN_model_3/LR_0.0001_AdamW_CosineAnnealingLR/weights_epoch_10.pt'):
+    img = read_image(img_path)
+    img.to(device)
+    model = get_model(weights=weights)
+    model.eval()
+    return model(img)

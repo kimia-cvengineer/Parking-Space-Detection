@@ -55,7 +55,7 @@ class FasterRCNN_FPN(nn.Module):
         return class_logits
 
 
-def create_model(with_mask=True, visionT=True):
+def create_model(with_mask=True, visionT=False):
 
     # load a model pre-trained on COCO
     if with_mask:
