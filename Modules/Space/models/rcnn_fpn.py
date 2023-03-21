@@ -71,7 +71,7 @@ def create_model(with_mask=True, visionT=False):
 
     # replace the classifier with a new one, that has
     # num_classes which is user-defined
-    num_classes = 2  # occupied + vacant
+    num_classes = 1+2  # BG + occupied + vacant
 
     # get number of input features for the classifier
     in_features = model.roi_heads.box_predictor.cls_score.in_features
