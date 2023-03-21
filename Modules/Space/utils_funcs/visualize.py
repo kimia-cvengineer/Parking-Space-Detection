@@ -217,7 +217,7 @@ def show(imgs):
         axs[0, i].set(xticklabels=[], yticklabels=[], xticks=[], yticks=[])
 
 
-def show_mask_predictions(preds, score_threshold=.8):
+def show_mask_predictions(image_list, preds, score_threshold=.8):
     output = filter_model_output(output=preds, score_threshold=score_threshold)
     output = get_boolean_mask(output)
     show([
