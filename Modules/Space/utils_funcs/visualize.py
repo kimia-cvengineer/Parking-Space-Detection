@@ -210,9 +210,9 @@ def get_boolean_mask(output):
 def get_mask_colors(output):
     # label 1 = empty, 2 =occupied
     all_colors = []
-    for index, pred in enumerate(output):
-        labels = pred['labels'].numpy()
-        colors = np.where(labels == 1, 'green', 'red')
+    for labels in output:
+        labels_np = labels.numpy()
+        colors = np.where(labels_np == 1, 'green', 'red')
         all_colors.append(colors)
 
     return all_colors
@@ -233,7 +233,7 @@ def show_mask_predictions(image_list, preds, score_threshold=.8):
     output = filter_model_output(output=preds, score_threshold=score_threshold)
     output = get_boolean_mask(output)
     show([
-        draw_segmentation_masks(image, prediction.get('masks'), alpha=0.9, colors=get_mask_colors(prediction.get('masks'))[0])
+        draw_segmentation_masks(image, prediction.get('masks'), alpha=0.9, colors=get_mask_colors(prediction.get('labels'))[0])
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])
 
