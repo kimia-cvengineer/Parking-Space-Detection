@@ -225,17 +225,3 @@ def show_mask_predictions(preds, score_threshold=.8):
         draw_segmentation_masks(image, prediction.get('masks'), alpha=0.9)
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])
-
-
-def get_model(weights):
-    # model_path = './MyFRCNN_model_3/LR_0.0001_AdamW_CosineAnnealingLR/weights_epoch_10.pt'
-    model.load_state_dict(torch.load(weights, map_location=device))
-    return model
-
-
-def predict(img_path, device, weights='./MyFRCNN_model_3/LR_0.0001_AdamW_CosineAnnealingLR/weights_epoch_10.pt'):
-    img = read_image(img_path)
-    img.to(device)
-    model = get_model(weights=weights)
-    model.eval()
-    return model(img)

@@ -13,11 +13,22 @@ import warnings
 # warnings.filterwarnings('ignore')
 CLASS_NAMES = ['Empty', 'Occupied']
 
-def get_model():
+
+def get_mask_rcnn_model(device):
     # set to evaluation mode
+    # device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    model = Mask_RCNN.create_model().to(device)
+    model.load_state_dict(torch.load(weights, map_location=device))
     model.eval()
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    Mask_RCNN.create_model().to(device)
+    return model
+
+
+def predict(model, img_path, device):
+    img = read_image(img_path)
+    img.to(device)
+    # model = get_model(weights=weights)
+    # model.eval()
+    return model(img)
 
 
 def get_coloured_mask(mask):
