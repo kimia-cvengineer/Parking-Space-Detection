@@ -1,4 +1,5 @@
 /.idea
 /venv
 __pycache__/
+/data
 #./Modules/Space/dataset/data/images
