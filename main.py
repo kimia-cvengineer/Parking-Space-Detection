@@ -2,7 +2,7 @@ import Modules.Sign.inference as SignDetector
 import Modules.Space.inference as SpaceDetector
 
 
-def get_spot_categories(spot_preds, sing_preds):
+def get_spot_categories(spot_preds, sign_preds):
     pass
 
 
