@@ -210,7 +210,7 @@ def get_boolean_mask(output):
 def get_mask_colors(output):
     # label 1 = empty, 2 =occupied
     labels = output.numpy()
-    colors = np.where(labels == 1, 'green', 'red')
+    colors = np.where(labels == 1, 'green', 'red').tolist()
     return colors
 
 
