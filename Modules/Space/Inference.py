@@ -5,6 +5,7 @@ import torchvision.transforms as T
 import torchvision
 import numpy as np
 from models import rcnn_fpn as Mask_RCNN
+from torchvision.io import read_image
 
 import cv2
 import random
