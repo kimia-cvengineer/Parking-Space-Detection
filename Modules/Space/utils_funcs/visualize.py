@@ -209,13 +209,9 @@ def get_boolean_mask(output):
 
 def get_mask_colors(output):
     # label 1 = empty, 2 =occupied
-    all_colors = []
-    for labels in output:
-        labels_np = labels.numpy()
-        colors = np.where(labels_np == 1, 'green', 'red')
-        all_colors.append(colors)
-
-    return all_colors
+    labels = output.numpy()
+    colors = np.where(labels == 1, 'green', 'red')
+    return colors
 
 
 def show(imgs):
