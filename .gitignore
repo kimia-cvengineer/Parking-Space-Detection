@@ -2,4 +2,6 @@
 /venv
 __pycache__/
 /data
+*.pth
+*.pt
 #./Modules/Space/dataset/data/images

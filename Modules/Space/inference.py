@@ -38,7 +38,7 @@ def predict(model, img_path, device):
 
 def get_prediction(img_path, device):
     return predict(
-        model=get_mask_rcnn_model(weights='./MyFRCNN_model_5/LR_8e-05_AdamW_CosineAnnealingLR/weights_epoch_29.pt',
+        model=get_mask_rcnn_model(weights='./Results/best_model.pt',
                                   device=device),
         img_path=img_path, device=device)
 
