@@ -207,6 +207,17 @@ def get_boolean_mask(output):
     return output
 
 
+def get_mask_colors(output):
+    # label 1 = empty, 2 =occupied
+    all_colors = []
+    for index, pred in enumerate(output):
+        labels = pred['labels'].numpy()
+        colors = np.where(labels == 1, 'green', 'red')
+        all_colors.append(colors)
+
+    return all_colors
+
+
 def show(imgs):
     if not isinstance(imgs, list):
         imgs = [imgs]
@@ -226,9 +237,10 @@ def show_mask_predictions(image_list, preds, score_threshold=.8):
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])
 
+
 def show_box_predictions(image_list, preds, score_threshold=.8):
     output = filter_model_output(output=preds, score_threshold=score_threshold)
     show([
-        draw_bounding_boxes(image, prediction.get('boxes'), alpha=0.9)
+        draw_bounding_boxes(image, prediction.get('boxes'), alpha=0.9, colors=get_mask_colors(output))
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])
