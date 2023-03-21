@@ -33,7 +33,7 @@ def predict(model, img_path, device):
 
     # model = get_model(weights=weights)
     # model.eval()
-    return model([img])
+    return img, model([img])
 
 
 def get_coloured_mask(mask):
