@@ -229,7 +229,7 @@ def show_mask_predictions(image_list, preds, score_threshold=.8):
     output = filter_model_output(output=preds, score_threshold=score_threshold)
     output = get_boolean_mask(output)
     show([
-        draw_segmentation_masks(image, prediction.get('masks'), alpha=0.9, colors=get_mask_colors(prediction.get('labels')))
+        draw_segmentation_masks(image, prediction.get('masks'), alpha=0.6, colors=get_mask_colors(prediction.get('labels')))
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])
 
