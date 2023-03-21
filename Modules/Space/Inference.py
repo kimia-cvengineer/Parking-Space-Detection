@@ -36,6 +36,13 @@ def predict(model, img_path, device):
     return model([img])
 
 
+def get_prediction(img_path, device):
+    return predict(
+        model=get_mask_rcnn_model(weights='./MyFRCNN_model_5/LR_8e-05_AdamW_CosineAnnealingLR/weights_epoch_29.pt',
+                                  device=device),
+        img_path=img_path, device=device)
+
+
 def get_coloured_mask(mask):
     """
     random_colour_masks
@@ -54,36 +61,37 @@ def get_coloured_mask(mask):
     return coloured_mask
 
 
-def get_prediction(img_path, confidence):
-    """
-    get_prediction
-      parameters:
-        - img_path - path of the input image
-        - confidence - threshold to keep the prediction or not
-      method:
-        - Image is obtained from the image path
-        - the image is converted to image tensor using PyTorch's Transforms
-        - image is passed through the model to get the predictions
-        - masks, classes and bounding boxes are obtained from the model and soft masks are made binary(0 or 1) on masks
-          ie: eg. segment of cat is made 1 and rest of the image is made 0
-
-    """
-    img = Image.open(img_path)
-    transform = T.Compose([T.ToTensor()])
-    img = transform(img)
-
-    img = img.to(device)
-    pred = model([img])
-    pred_score = list(pred[0]['scores'].detach().cpu().numpy())
-    pred_t = [pred_score.index(x) for x in pred_score if x > confidence][-1]
-    masks = (pred[0]['masks'] > 0.5).squeeze().detach().cpu().numpy()
-    # print(pred[0]['labels'].numpy().max())
-    pred_class = [CLASS_NAMES[i] for i in list(pred[0]['labels'].cpu().numpy())]
-    pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().cpu().numpy())]
-    masks = masks[:pred_t + 1]
-    pred_boxes = pred_boxes[:pred_t + 1]
-    pred_class = pred_class[:pred_t + 1]
-    return masks, pred_boxes, pred_class
+#
+# def get_prediction(img_path, confidence):
+#     """
+#     get_prediction
+#       parameters:
+#         - img_path - path of the input image
+#         - confidence - threshold to keep the prediction or not
+#       method:
+#         - Image is obtained from the image path
+#         - the image is converted to image tensor using PyTorch's Transforms
+#         - image is passed through the model to get the predictions
+#         - masks, classes and bounding boxes are obtained from the model and soft masks are made binary(0 or 1) on masks
+#           ie: eg. segment of cat is made 1 and rest of the image is made 0
+#
+#     """
+#     img = Image.open(img_path)
+#     transform = T.Compose([T.ToTensor()])
+#     img = transform(img)
+#
+#     img = img.to(device)
+#     pred = model([img])
+#     pred_score = list(pred[0]['scores'].detach().cpu().numpy())
+#     pred_t = [pred_score.index(x) for x in pred_score if x > confidence][-1]
+#     masks = (pred[0]['masks'] > 0.5).squeeze().detach().cpu().numpy()
+#     # print(pred[0]['labels'].numpy().max())
+#     pred_class = [CLASS_NAMES[i] for i in list(pred[0]['labels'].cpu().numpy())]
+#     pred_boxes = [[(i[0], i[1]), (i[2], i[3])] for i in list(pred[0]['boxes'].detach().cpu().numpy())]
+#     masks = masks[:pred_t + 1]
+#     pred_boxes = pred_boxes[:pred_t + 1]
+#     pred_class = pred_class[:pred_t + 1]
+#     return masks, pred_boxes, pred_class
 
 
 def segment_instance(img_path, confidence=0.5, rect_th=2, text_size=2, text_th=2):
