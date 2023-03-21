@@ -237,6 +237,6 @@ def show_mask_predictions(image_list, preds, score_threshold=.8):
 def show_box_predictions(image_list, preds, score_threshold=.8):
     output = filter_model_output(output=preds, score_threshold=score_threshold)
     show([
-        draw_bounding_boxes(image, prediction.get('boxes'), alpha=0.9)
+        draw_bounding_boxes(image, prediction.get('boxes'), alpha=0.6)
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])
