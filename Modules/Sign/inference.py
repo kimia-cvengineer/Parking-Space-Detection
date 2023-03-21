@@ -6,7 +6,7 @@ from torchvision import transforms, datasets, models
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 
 
-def get_prediction(image_path):
+def get_prediction(image_path, device):
     # set up model
     model = torchvision.models.detection.fasterrcnn_resnet50_fpn_v2(
         weights=torchvision.models.detection.FasterRCNN_ResNet50_FPN_V2_Weights.DEFAULT,
@@ -14,12 +14,10 @@ def get_prediction(image_path):
     in_features = model.roi_heads.box_predictor.cls_score.in_features
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
 
-    DEVICE = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-
     # put the weight path here
-    checkpoint = torch.load(weights, map_location=DEVICE)
+    checkpoint = torch.load(weights, map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
-    model.to(DEVICE).eval()
+    model.to(device).eval()
 
     # load image
     img = np.array(Image.open(image_path).copy())
