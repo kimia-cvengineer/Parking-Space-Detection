@@ -207,10 +207,10 @@ def get_boolean_mask(output):
     return output
 
 
-def get_mask_colors(output):
+def get_space_colors(output, colors=('green', 'red')):
     # label 1 = empty, 2 =occupied
     labels = output.numpy()
-    colors = np.where(labels == 1, 'green', 'red').tolist()
+    colors = np.where(labels == 1, colors[0], colors[1]).tolist()
     return colors
 
 
@@ -229,7 +229,7 @@ def show_mask_predictions(image_list, preds, score_threshold=.8):
     output = filter_model_output(output=preds, score_threshold=score_threshold)
     output = get_boolean_mask(output)
     show([
-        draw_segmentation_masks(image, prediction.get('masks'), alpha=0.6, colors=get_mask_colors(prediction.get('labels')))
+        draw_segmentation_masks(image, prediction.get('masks'), alpha=0.6, colors=get_space_colors(prediction.get('labels')))
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])
 
@@ -237,6 +237,6 @@ def show_mask_predictions(image_list, preds, score_threshold=.8):
 def show_box_predictions(image_list, preds, score_threshold=.8, box_width=10):
     output = filter_model_output(output=preds, score_threshold=score_threshold)
     show([
-        draw_bounding_boxes(image, prediction.get('boxes'), width=box_width, colors=get_mask_colors(prediction.get('labels')))
+        draw_bounding_boxes(image, prediction.get('boxes'), width=box_width, colors=get_space_colors(prediction.get('labels')))
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])
