@@ -143,7 +143,7 @@ def get_all_possible_num_of_workers(ds):
 
 def filter_small_areas(target,  threshold):
     boxes, masks = [], []
-    for box, mask, area in zip(target['boxes'], target['masks'], target['areas']):
+    for box, mask, area in zip(target['boxes'], target['masks'], target['area']):
         if area.item() > threshold:
             boxes.append(box.tolist())
             masks.append(mask.tolist())
