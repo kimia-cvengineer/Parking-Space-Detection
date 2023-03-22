@@ -5,7 +5,7 @@ import torchvision.transforms as T
 import torchvision.transforms.functional as F
 import torchvision
 import numpy as np
-from models import rcnn_fpn as Mask_RCNN
+from Modules.Space.models import rcnn_fpn as Mask_RCNN
 from torchvision.io import read_image
 
 import cv2
@@ -38,7 +38,7 @@ def predict(model, img_path, device):
 
 def get_prediction(img_path, device):
     return predict(
-        model=get_mask_rcnn_model(weights='./Results/best_model.pt',
+        model=get_mask_rcnn_model(weights='./Modules/Space/Results/best_model.pt',
                                   device=device),
         img_path=img_path, device=device)
 

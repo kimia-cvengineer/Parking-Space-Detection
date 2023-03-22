@@ -6,7 +6,7 @@ from matplotlib import patches
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection, LineCollection
 
-from utils_funcs import transforms
+from Modules.Space.utils_funcs import transforms
 from torchvision.utils import make_grid
 import torchvision.transforms as T
 import torchvision.transforms.functional as F

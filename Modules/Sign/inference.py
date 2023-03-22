@@ -15,7 +15,7 @@ def get_prediction(image_path, device):
     model.roi_heads.box_predictor = FastRCNNPredictor(in_features, 2)
 
     # put the weight path here
-    checkpoint = torch.load(weights='./Results/best_model.pth', map_location=device)
+    checkpoint = torch.load('./Modules/Sign/Results/best_model.pth', map_location=device)
     model.load_state_dict(checkpoint['model_state_dict'])
     model.to(device).eval()
 
@@ -31,6 +31,7 @@ def get_prediction(image_path, device):
     transform = transforms.ToTensor()
     input = transform(img)
     input = input.unsqueeze_(0)
+    input.to(device)
     output = model(input)
 
     return output
