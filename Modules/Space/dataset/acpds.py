@@ -147,6 +147,6 @@ def filter_small_areas(target,  threshold):
         if area.item() > threshold:
             boxes.append(box.tolist())
             masks.append(mask.tolist())
-    target['boxes'] = boxes
-    target['masks'] = masks
+    target['boxes'] = torch.as_tensor(boxes, dtype=torch.float32)
+    target['masks'] = torch.as_tensor(numpy.array(masks), dtype=torch.uint8)
     return target
