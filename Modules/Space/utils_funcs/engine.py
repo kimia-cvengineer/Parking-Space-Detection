@@ -34,7 +34,6 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
 
         # augment data
         images, targets = transforms.augment(images, targets, resolution)
-        print("images shape : ", images[0].shape)
         # preprocess image
         # res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
         #                                              res=resolution)
@@ -114,16 +113,12 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     print("test data loader : ", data_loader)
     i = 0
     for images, targets in metric_logger.log_every(data_loader, 10, log_dir, header):
-        if i == 3 :
-            break
-        i +=1
         # preprocess images
         images = transforms.preprocess_images(images, device)
 
         resolution = None
         if resolution is not None:
             images, targets = transforms.augment(images, targets, resolution, False)
-        print("images shape : ", images[0].shape)
 
         # preprocess image
         # res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
