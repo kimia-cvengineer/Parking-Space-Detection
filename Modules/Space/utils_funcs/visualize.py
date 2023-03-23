@@ -143,8 +143,19 @@ def plot_img_bbox(img, target, title=None):
     plt.show()
 
 
-def plot_log_per_epoch(epochs, values, y_label):
-    plt.plot(epochs, values)
+def plot_log_per_epoch(epochs, y_label, values1, values2=None):
+    if values2 is not None:
+        # Plotting both the curves simultaneously
+        plt.plot(epochs, values1, color='g', label='mAP@0.5')
+        plt.plot(epochs, values2, color='b', label='mAP@0.5:0.95')
+    else:
+        plt.plot(epochs, values1)
+
+    ax = plt.axes()
+    # Setting the background color of the plot
+    # using set_facecolor() method
+    ax.set_facecolor("gainsboro")
+
     plt.xlabel('Epochs')
     plt.ylabel(y_label)
     plt.show()

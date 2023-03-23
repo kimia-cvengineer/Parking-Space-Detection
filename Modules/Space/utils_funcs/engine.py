@@ -34,7 +34,7 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
 
         # augment data
         images, targets = transforms.augment(images, targets, resolution)
-
+        print("images shape : ", images.shape)
         # preprocess image
         # res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
         #                                              res=resolution)
@@ -118,6 +118,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
         resolution = None
         if resolution is not None:
             images, targets = transforms.augment(images, targets, resolution, False)
+        print("images shape : ", images.shape)
 
         # preprocess image
         # res_images, res_rois = transforms.preprocess(images, rois=[t["boxes"] for t in targets], device=device,
@@ -223,7 +224,8 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
 
         print("*********** evaluation step ***********")
         coco_eval = evaluate(model, valid_ds, res, model_dir, device)
-        epoch_mAPs = coco_eval.get_mAP_results()[0]
+        epoch_mAPs = coco_eval.get_mAP_results()
+        print("epoch_mAPs : ", epoch_mAPs)
         mAP_results.append(epoch_mAPs)
 
         # save mAP evaluation result
@@ -235,8 +237,13 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
     # Plot training losses
     plot_log_per_epoch(range(1, epochs + 1), [round(loss[0], 3) for loss in losses], "Losses")
 
-    # Plot evaluation AP results [IoU=0.50:0.95]
-    plot_log_per_epoch(range(1, epochs + 1), [round(mAP[1], 3) for mAP in mAP_results], "mAPs")
+    # Plot evaluation box mAP results [IoU=0.50]
+    plot_log_per_epoch(range(1, epochs + 1), [round(mAPs[0][1], 3) for mAPs in mAP_results],
+                       [round(mAPs[0][0], 3) for mAPs in mAP_results], "Box mAPs")
+
+    # Plot evaluation segm mAP results [IoU=0.50]
+    plot_log_per_epoch(range(1, epochs + 1), [round(mAPs[1][1], 3) for mAPs in mAP_results],
+                       [round(mAPs[1][0], 3) for mAPs in mAP_results], "Segm mAPs")
 
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
