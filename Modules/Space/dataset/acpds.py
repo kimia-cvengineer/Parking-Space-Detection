@@ -79,6 +79,12 @@ class ACPDS():
         areas = torch.as_tensor(areas)
         labels = torch.tensor(labels)
 
+<<<<<<< HEAD
+=======
+        # Filter out small boxes
+        boxes = filter_boxes(boxes, areas, threshold=3200)
+
+>>>>>>> f3e57fa0902844c34cf3cf53e627c5d822dbd23a
         # Suppose all instances are not crowd
         iscrowd = torch.zeros((boxes.shape[0],), dtype=torch.int64)
 
@@ -90,9 +96,12 @@ class ACPDS():
         target["iscrowd"] = iscrowd
         target["image_id"] = torch.tensor([idx])
 
+<<<<<<< HEAD
         # Filter out small objects
         target = filter_small_areas(target, threshold=3200)
 
+=======
+>>>>>>> f3e57fa0902844c34cf3cf53e627c5d822dbd23a
         if self.res is not None:
             resize_transform = transforms.Resize(self.res)
             image, target = resize_transform(image=image,
@@ -141,6 +150,7 @@ def get_all_possible_num_of_workers(ds):
         print("Finish with:{} second, num_workers={}".format(end - start, num_workers))
 
 
+<<<<<<< HEAD
 def filter_small_areas(target, threshold):
     boxes, masks = [], []
     for box, mask, area in zip(target['boxes'], target['masks'], target['areas']):
@@ -150,3 +160,11 @@ def filter_small_areas(target, threshold):
     target['boxes'] = boxes
     target['masks'] = masks
     return target
+=======
+def filter_boxes(rois, areas, threshold):
+    boxes = []
+    for roi, area in zip(rois, areas):
+        if area.item() > threshold:
+            boxes.append(roi.tolist())
+    return torch.tensor(boxes)
+>>>>>>> f3e57fa0902844c34cf3cf53e627c5d822dbd23a

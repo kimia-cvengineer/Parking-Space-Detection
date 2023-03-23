@@ -1,0 +1,11 @@
+# Images and labels direcotry
+TRAIN_DIR_IMAGES: '/home/yuchen/venv/Faster_RCNN/data_sign/train_images'
+TRAIN_DIR_LABELS: '/home/yuchen/venv/Faster_RCNN/data_sign/train_labels'
+VALID_DIR_IMAGES: '/home/yuchen/venv/Faster_RCNN/data_sign/valid_images'
+VALID_DIR_LABELS: '/home/yuchen/venv/Faster_RCNN/data_sign/valid_labels'
+
+# Class names
+CLASSES: ['__background__','handicap']
+
+# Number of classes (object classes + 1 for background class in Faster RCNN)
+NC: 2

@@ -6,8 +6,9 @@ from matplotlib import patches
 from matplotlib.patches import Polygon
 from matplotlib.collections import PatchCollection, LineCollection
 
-from utils_funcs import transforms
+from Modules.Space.utils_funcs import transforms
 from torchvision.utils import make_grid
+import torchvision.transforms as T
 import torchvision.transforms.functional as F
 from torchvision.utils import draw_bounding_boxes
 from torchvision.utils import draw_segmentation_masks
@@ -205,7 +206,6 @@ def get_boolean_mask(output):
         output[index]['masks'] = output[index]['masks'].squeeze(1)
     return output
 
-
 def get_space_colors(output, colors=('green', 'red')):
     # label 1 = empty, 2 =occupied
     labels = output.numpy()
@@ -228,6 +228,7 @@ def show_mask_predictions(image_list, preds, score_threshold=.8):
     output = get_boolean_mask(output)
     show([
         draw_segmentation_masks(image, prediction.get('masks'), alpha=0.6, colors=get_space_colors(prediction.get('labels')))
+
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])
 
@@ -236,5 +237,6 @@ def show_box_predictions(image_list, preds, score_threshold=.8, box_width=10):
     output = filter_model_output(output=preds, score_threshold=score_threshold)
     show([
         draw_bounding_boxes(image, prediction.get('boxes'), width=box_width, colors=get_space_colors(prediction.get('labels')))
+
         for index, (image, prediction) in enumerate(zip(image_list, output))
     ])

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 .DS_Store
 __pycache__/
 .ipynb_checkpoints
@@ -9,3 +10,12 @@ venv/
 /data
 *.pt
 *.pth
+=======
+/.idea
+/venv
+__pycache__/
+/data
+*.pth
+*.pt
+#./Modules/Space/dataset/data/images
+>>>>>>> f3e57fa0902844c34cf3cf53e627c5d822dbd23a
