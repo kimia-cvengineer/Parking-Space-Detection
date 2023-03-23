@@ -110,7 +110,6 @@ def evaluate(model, data_loader, resolution, log_dir, device):
     coco = get_coco_api_from_dataset(data_loader.dataset)
     iou_types = _get_iou_types(model)
     coco_evaluator = CocoEvaluator(coco, iou_types)
-    print("test data loader : ", data_loader)
     i = 0
     for images, targets in metric_logger.log_every(data_loader, 10, log_dir, header):
         # preprocess images
