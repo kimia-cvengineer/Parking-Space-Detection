@@ -235,15 +235,15 @@ def train_model(model, train_ds, valid_ds, test_ds, model_dir, device, lr=1e-5, 
         torch.save(model.state_dict(), f'{model_dir}/weights_epoch_{epoch}.pt')
 
     # Plot training losses
-    plot_log_per_epoch(range(1, epochs + 1), [round(loss[0], 3) for loss in losses], "Losses")
+    plot_log_per_epoch(range(1, epochs + 1), "Losses", [round(loss[0], 3) for loss in losses])
 
     # Plot evaluation box mAP results [IoU=0.50]
-    plot_log_per_epoch(range(1, epochs + 1), [round(mAPs[0][1], 3) for mAPs in mAP_results],
-                       [round(mAPs[0][0], 3) for mAPs in mAP_results], "Box mAPs")
+    plot_log_per_epoch(range(1, epochs + 1), "Box mAPs", [round(mAPs[0][1], 3) for mAPs in mAP_results],
+                       [round(mAPs[0][0], 3) for mAPs in mAP_results])
 
     # Plot evaluation segm mAP results [IoU=0.50]
-    plot_log_per_epoch(range(1, epochs + 1), [round(mAPs[1][1], 3) for mAPs in mAP_results],
-                       [round(mAPs[1][0], 3) for mAPs in mAP_results], "Segm mAPs")
+    plot_log_per_epoch(range(1, epochs + 1), "Segm mAPs", [round(mAPs[1][1], 3) for mAPs in mAP_results],
+                       [round(mAPs[1][0], 3) for mAPs in mAP_results])
 
     with open(f'{model_dir}/logs.txt', 'a', newline='\n', encoding='utf-8') as f:
         f.write("*********** testing step ***********" + '\n')
