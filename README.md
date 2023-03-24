@@ -22,7 +22,7 @@ Combination of ACPDS and online resourses. Here is a sample from the dataset:
 To run inference on the trained model and get the prediction, run [main](main.py). It gets the model predictions given an image and draw predictions on the images to visualize the outputs. 
 
 | ![alt text](/Illustrations/prediction_visualiztion_sample_img1.png) | ![alt text](/Illustrations/prediction_visualiztion_sample_img2.png) |
-
+| ------------ | ------------ |
 
 
 # Training
