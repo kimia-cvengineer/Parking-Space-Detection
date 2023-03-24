@@ -3,7 +3,7 @@
 In this repository, we provide:
 - code to reproduce all of our results
 - download links for the [ACPDS dataset](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Frois_gopro.zip)
-- download links for the [Custom dataset](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Frois_gopro.zip)
+- download links for the [Custom dataset](https://drive.google.com/file/d/1__tQI7GGbzt4KL0cv6gR6UmJyzVDQPoE/view?usp=sharing)
 - Colab notebooks to [explore the dataset and models](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/model_playground.ipynb), [train a model](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train.ipynb), and [plot the training logs](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train_log_analysis.ipynb)
 
 # Datasets
