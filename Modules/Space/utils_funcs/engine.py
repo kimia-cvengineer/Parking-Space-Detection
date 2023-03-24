@@ -14,6 +14,7 @@ from utils_funcs.visualize import plot_log_per_epoch
 
 
 def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, print_freq, log_dir, scaler=None):
+    # We process images during dataset reading
     resolution = None
 
     model.train()
@@ -41,21 +42,12 @@ def train_one_epoch(model, optimizer, data_loader, resolution, device, epoch, pr
         # update boxed according to the new resolution
         new_target = []
         for idx, target in enumerate(targets):
-            # if resolution is not None:
-            #     target["boxes"] = torch.tensor(res_rois[idx])
             new_target.append({k: v.to(device) for k, v in target.items()})
         targets = new_target
         with torch.cuda.amp.autocast(enabled=scaler is not None):
             loss_dict = model(images, targets)
             # loss_dict = model(res_images, targets)
             losses = sum(loss for loss in loss_dict.values())
-
-        # i = 0
-        # for image, target in zip(res_images, targets):
-        #     if i == 3:
-        #         break
-        #     i += 1
-        #     visualize.plot_img_bbox(image, target)
 
         # reduce losses over all GPUs for logging purposes
         loss_dict_reduced = utils.reduce_dict(loss_dict)
@@ -100,6 +92,9 @@ def _get_iou_types(model):
 
 @torch.inference_mode()
 def evaluate(model, data_loader, resolution, log_dir, device):
+    # We process images during dataset reading
+    resolution = None
+
     n_threads = torch.get_num_threads()
     # FIXME remove this and make paste_masks_in_image run on the GPU
     torch.set_num_threads(1)
@@ -115,7 +110,7 @@ def evaluate(model, data_loader, resolution, log_dir, device):
         # preprocess images
         images = transforms.preprocess_images(images, device)
 
-        resolution = None
+
         if resolution is not None:
             images, targets = transforms.augment(images, targets, resolution, False)
 

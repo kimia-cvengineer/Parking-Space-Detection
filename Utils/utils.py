@@ -11,20 +11,20 @@ def filter_model_output(output, score_threshold=.3):
     return filtred_output
 
 
-def get_sign_spot_correspondences(spot_preds, sign_preds, thresh=.01):
+def get_mark_spot_correspondences(spot_preds, mark_preds, thresh=.01):
     """
     Returns the row and column indices with the maximum IoU value for each row in the IoU matrix to get the best
     correspondence
 
-    Arguments:
-    iou_matrix -- a matrix of size (num_rows, num_cols) representing the IoU calculation for each box pair.
+    Arguments
+    iou_matrix: a matrix of size (num_rows, num_cols) representing the IoU calculation for each box pair.
 
-    Returns:
-    A list of tuples (row_index, col_index) representing the row and column indices with the maximum IoU value for each row in the matrix.
+    Returns: A list of tuples (row_index, col_index) representing the row and column indices with the maximum IoU
+    value for each row in the matrix.
     """
 
     # Calculate the IoU for each spot, sign pair
-    iou_matrix = calculate_iou_matrix(spot_preds, sign_preds)
+    iou_matrix = calculate_iou_matrix(spot_preds, mark_preds)
 
     corrs_indices, single_indices = [], []
 
