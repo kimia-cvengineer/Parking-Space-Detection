@@ -9,7 +9,7 @@ In this repository, we provide:
 # Datasets
 
 1. ACPDS:
-The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera. ([paper](https://arxiv.org/pdf/2107.12207.pdf) and [repo](https://github.com/martin-marek/parking-space-occupancy))
+The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera ([paper](https://arxiv.org/pdf/2107.12207.pdf) and [repo](https://github.com/martin-marek/parking-space-occupancy)).
 
 Here is a sample from the dataset:
 
