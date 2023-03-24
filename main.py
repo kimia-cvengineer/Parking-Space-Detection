@@ -33,18 +33,18 @@ if marks_len > 0:
     corrs_indices = numpy.array(corrs_indices)
 
 # Check existence of corresponding marks
-# if len(corrs_indices) > 0:
-#     sign_spots_indices, marks_indices = corrs_indices[:, 0], corrs_indices[:, 1]
-#
-#     # Handicapped spots
-#     corr_spots, corr_marks = {}, {}
-#     for spot_key, spot_val in spots.items():
-#         corr_spots[spot_key] = spot_val[sign_spots_indices]
-#
-#     # Extract regular spots
-#     reg_spots = {}
-#     for spot_key, spot_val in spots.items():
-#         reg_spots[spot_key] = spot_val[single_indices]
-#     draw_predictions(img_path, reg_spots, corr_spots)
-# else:
-draw_predictions(img_path, spots)
+if len(corrs_indices) > 0:
+    sign_spots_indices, marks_indices = corrs_indices[:, 0], corrs_indices[:, 1]
+
+    # Handicapped spots
+    corr_spots, corr_marks = {}, {}
+    for spot_key, spot_val in spots.items():
+        corr_spots[spot_key] = spot_val[sign_spots_indices]
+
+    # Extract regular spots
+    reg_spots = {}
+    for spot_key, spot_val in spots.items():
+        reg_spots[spot_key] = spot_val[single_indices]
+    draw_predictions(img_path, reg_spots, corr_spots)
+else:
+    draw_predictions(img_path, spots)
