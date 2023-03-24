@@ -11,12 +11,12 @@ In this repository, we provide:
 1. ACPDS
 The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera. Here is a sample from the dataset:
 
-![alt text](/Modules/Space/illustrations/dataset_sample.jpg | width=100)
-<img src="/Modules/Space/illustrations/dataset_sample.jpg" width="100" alt="alt_text">
+<img src="/Modules/Space/illustrations/dataset_sample.jpg" width="500" alt="alt_text">
 
 2. Custom dataset
 Combination of ACPDS and online resourses. Here is a sample from the dataset:
-![alt text](/Modules/Mark/illustrations/dataset_sample.png | width=100)
+
+<img src="/Modules/Mark/illustrations/dataset_sample.jpg" width="500" alt="alt_text">
 
 # Inference and Visualization
 
