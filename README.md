@@ -8,15 +8,19 @@ In this repository, we provide:
 
 # Datasets
 
-1. ACPDS
-The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera. Here is a sample from the dataset:
+1. ACPDS:
+The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera. 
 
-<img src="/Modules/Space/illustrations/dataset_sample.jpg" width="500" alt="alt_text">
+Here is a sample from the dataset:
 
-2. Custom dataset
-Combination of ACPDS and online resourses. Here is a sample from the dataset:
+<img src="/Modules/Space/illustrations/dataset_sample.jpg" width="400" alt="alt_text">
 
-<img src="/Modules/Mark/illustrations/dataset_sample.png" width="500" alt="alt_text">
+2. Custom dataset:
+Combination of ACPDS and online resourses. 
+
+Here is a sample from the dataset:
+
+<img src="/Modules/Mark/illustrations/dataset_sample.png" width="400" alt="alt_text">
 
 # Inference and Visualization
 
