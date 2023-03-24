@@ -13,14 +13,14 @@ The dataset contains 293 images captured at a roughly 10-meter height using a Go
 
 Here is a sample from the dataset:
 
-<img src="/Modules/Space/illustrations/dataset_sample.jpg" width="400" alt="alt_text">
+<img src="/Modules/Space/illustrations/dataset_sample.jpg" width="500" alt="alt_text">
 
 2. Custom dataset:
 Combination of ACPDS and online resourses. 
 
 Here is a sample from the dataset:
 
-<img src="/Modules/Mark/illustrations/dataset_sample.png" width="400" alt="alt_text">
+<img src="/Modules/Mark/illustrations/dataset_sample.png" width="500" alt="alt_text">
 
 # Inference and Visualization
 
@@ -32,7 +32,7 @@ To run inference on the trained model and get the prediction, run [main.py](main
 
 # Training
 
-To reproduce our full results or further improve the models performance, please refer to the modules 'README.md' files.
+To reproduce our full results or further improve the models performance, please refer to the modules *README.md* files.
 
 # Citation
 
