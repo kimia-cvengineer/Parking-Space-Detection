@@ -13,7 +13,7 @@ In this repository, we provide:
 
 The dataset (called *Action-Camera Parking Dataset*) contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera. Here is a sample from the dataset:
 
-![alt text](illustrations/dataset_sample.jpg)
+![alt text](/Modules/Space/illustrations/dataset_sample.jpg)
 
 # Inference
 
