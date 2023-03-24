@@ -7,7 +7,9 @@ from Utils.utils import get_sign_spot_correspondences, filter_model_output
 from Utils.visualize import draw_predictions
 
 device = torch.device('cpu')
-img_path = './data/images/GOPR6761.JPG'
+# img_path = './data/images/GOPR6754.JPG'
+# img_path = './data/images/GOPR6741.JPG'
+img_path = './data/images/GOPR6720.JPG'
 # Get Parking Sign prediction
 signs = SignDetector.get_prediction(img_path, device)[0]
 print("sign preds : ", signs['labels'].shape)
@@ -23,23 +25,29 @@ print("filtered sign preds : ", signs['labels'].shape)
 
 spots = filter_model_output([spots], score_threshold=.5)[0]
 print("filtered spot preds : ", spots['labels'].shape)
+
+signs_len = signs['labels'].nelement()
 # Merge predictions
-corrs_indices, single_indices = get_sign_spot_correspondences(spots['boxes'], signs['boxes'])
-corrs_indices = numpy.array(corrs_indices)
-print("corrs_indices : ", corrs_indices)
-sign_spots_indices, signs_indices = corrs_indices[:, 0], corrs_indices[:, 1]
-# print("corrs spots : ", spots['boxes'][spots_indices])
-print("len corrs spots : ", len(spots['boxes'][sign_spots_indices]))
-print("spots : ", spots)
+corrs_indices = []
+if signs_len > 0:
+    corrs_indices, single_indices = get_sign_spot_correspondences(spots['boxes'], signs['boxes'])
+    corrs_indices = numpy.array(corrs_indices)
+    print("corrs_indices : ", corrs_indices)
 
-# Handicapped spots
-corr_spots, corr_signs = {}, {}
-for spot_key, spot_val in spots.items():
-    corr_spots[spot_key] = spot_val[sign_spots_indices]
-print("corr_spots: ", corr_spots)
+# Check existence of corresponding signs
+if len(corrs_indices) > 0:
+    sign_spots_indices, signs_indices = corrs_indices[:, 0], corrs_indices[:, 1]
 
-reg_spots = {}
-for spot_key, spot_val in spots.items():
-    reg_spots[spot_key] = spot_val[single_indices]
+    # Handicapped spots
+    corr_spots, corr_signs = {}, {}
+    for spot_key, spot_val in spots.items():
+        corr_spots[spot_key] = spot_val[sign_spots_indices]
 
-draw_predictions(img_path, reg_spots, corr_spots)
+if len(corrs_indices) > 0:
+    # Extract regular spots
+    reg_spots = {}
+    for spot_key, spot_val in spots.items():
+        reg_spots[spot_key] = spot_val[single_indices]
+    draw_predictions(img_path, reg_spots, corr_spots)
+else:
+    draw_predictions(img_path, spots)

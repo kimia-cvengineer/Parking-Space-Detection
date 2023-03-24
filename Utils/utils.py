@@ -25,8 +25,6 @@ def get_sign_spot_correspondences(spot_preds, sign_preds, thresh=.01):
 
     # Calculate the IoU for each spot, sign pair
     iou_matrix = calculate_iou_matrix(spot_preds, sign_preds)
-    print("iou_matrix: ", iou_matrix)
-    print("len iou_matrix: ", len(iou_matrix))
 
     corrs_indices, single_indices = [], []
 
