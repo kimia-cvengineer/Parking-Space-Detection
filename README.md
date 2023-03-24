@@ -15,39 +15,19 @@ The dataset contains 293 images captured at a roughly 10-meter height using a Go
 
 2. Custom dataset
 Combination of ACPDS and online resourses. Here is a sample from the dataset:
-![alt text](/Modules/Mark/illustrations/dataset_sample.jpg)
+![alt text](/Modules/Mark/illustrations/dataset_sample.png)
 
-# Inference
+# Inference and Visualization
 
-Here's a minimal example to run inference on a trained model. For more, please see the [demo notebook](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/model_playground.ipynb).
+To run inference on the trained model and get the prediction, run [main](main.py). It gets the model predictions given an image and draw predictions on the images to visualize the outputs. 
 
-```python
-import torch, os, requests
-from models.rcnn import RCNN
-from utils_funcs import transforms
+| ![alt text](/Illustrations/prediction_visualiztion_sample_img1.png) | ![alt text](/Illustrations/prediction_visualiztion_sample_img2.png) |
 
-# create model
-model = RCNN()
 
-# load model weights
-weights_path = 'weights.pt'
-if not os.path.exists(weights_path):
-    r = requests.get('https://storage.googleapis.com/pd-models/RCNN_128_square_gopro.pt')
-    with open(weights_path, 'wb') as f:
-        f.write(r.content)
-model.load_state_dict(torch.load(weights_path, map_location='cpu'))
-
-# inference
-image = torch.zeros([3, 1000, 1000])
-parking_space_coordinates = torch.zeros([10, 4, 2])
-image = transforms.preprocess(image)
-class_logits = model(image, parking_space_coordinates)
-class_scores = class_logits.softmax(1)[:, 1]
-```
 
 # Training
 
-To reproduce our full results from the paper, please run the [train_all_models](train_all_models.py) script locally. To train just a single model, please use the provided [Colab notebook](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train.ipynb) – Google Colab is sufficient for this.
+To reproduce our full results or further improve the models performance, please refer to the modules '''README.md''' files.
 
 # Citation
 
