@@ -3,8 +3,8 @@
 In this repository, we provide:
 - code to reproduce all of our results
 - ACPDS [paper](https://arxiv.org/pdf/2107.12207.pdf) and [repo](https://github.com/martin-marek/parking-space-occupancy)
-- download links for the [ACPDS dataset](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Frois_gopro.zip), [training logs](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Fpaper_training_output.zip), and [model weights](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2FRCNN_128_square_gopro.pt)
-- Colab notebooks to [explore the dataset and models](https://colab.research.google.com/github/Parking-Space-Detection/tree/master/Modules/Space/notebooks/model_visualization.ipynb), [train a model](https://colab.research.google.com/github/Parking-Space-Detection/tree/master/Modules/Space/notebooks/train_model.ipynb).
+- download links for the [ACPDS dataset](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Frois_gopro.zip) and [model weights](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2FRCNN_128_square_gopro.pt)
+- Colab notebooks to [explore the dataset and models](https://colab.research.google.com/github/Parking-Space-Detection/blob/master/Modules/Space/notebooks/model_visualization.ipynb) and [train a model](https://colab.research.google.com/github/Parking-Space-Detection/blob/master/Modules/Space/notebooks/train_model.ipynb).
 
 ## Introcudtion
 
