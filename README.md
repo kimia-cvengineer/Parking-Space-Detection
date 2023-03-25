@@ -12,13 +12,13 @@ In this repository, we provide:
 - Colab notebooks to [explore the dataset and models](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/model_playground.ipynb), [train a model](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train.ipynb), and [plot the training logs](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train_log_analysis.ipynb)
 
 
-# Introduction
+## Introduction
 
    With the increasing number of vehicles on the road, parking spaces have become scarce resources in urban areas, and it can be challenging to find available spots, especially for people with disabilities. Automatic parking space detection can not only facilitate the process of looking for an available parking spot but also help drivers save time and effectively reduce emissions as well as traffic congestion by navigating directly to the pre-suggested spot.
    
    In parking lots, there are some spaces allocated to people with disabilities to improve their accessibility to the spots. To help them automatically find those spaces, we proposed an image-based smart parking system that looks for available regular and accessible parking spots. Thus, this project highlights the importance of developing automatic parking systems with special attention to accessible parking spots in order to create a more equitable and accessible urban environment.
 
-# Methodology
+## Methodology
 
 We split the project into three main tasks. 
 * Parking space detection
@@ -36,7 +36,7 @@ We split the project into three main tasks.
    - Outputs regular and accessible parking spot along with their occupancy
 
 
-# Datasets
+## Datasets
 
 * ACPDS:
 The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera ([paper](https://arxiv.org/pdf/2107.12207.pdf) and [repo](https://github.com/martin-marek/parking-space-occupancy)).
@@ -52,7 +52,7 @@ Combination of ACPDS and online resourses.
 
 <img src="/Modules/Mark/illustrations/dataset_sample.png" width="500" alt="alt_text">
 
-# Results
+## Results
 
 * Parking Space Detector 
 
@@ -71,7 +71,7 @@ Combination of ACPDS and online resourses.
 | mAR  | 0.5:0.95 | 0.702 | 0.573 |
 
 
-# Inference and Visualization
+## Inference and Visualization
 
 To run inference on the trained model and get the prediction, run [main.py](main.py). It gets the model predictions given an image and draw predictions on the images to visualize the outputs. 
 
@@ -79,7 +79,7 @@ To run inference on the trained model and get the prediction, run [main.py](main
 | ------------ | ------------ |
 
 
-# Training
+## Training
 
 To reproduce our full results or further improve the models performance, please refer to the modules *README.md* files.
 
