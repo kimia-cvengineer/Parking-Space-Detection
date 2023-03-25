@@ -57,7 +57,7 @@ Combination of ACPDS and online resourses.
 
 # Results
 
-1. Parking Space Detector 
+* Parking Space Detector 
 
 | Metric  | IoU | Valid Box IoU | Valid Segm IoU | Test Box IoU | Test Segm IoU | 
 | --- | --- | --- | --- | --- | --- | 
@@ -65,7 +65,7 @@ Combination of ACPDS and online resourses.
 | mAP  | 0.5:0.95 | 0.334 | 0.300 | 0.260 | 0.229 | 
 | mAR  | 0.5:0.95 | 0.421 | 0.368 | 0.339 | 0.291 | 
 
-2. Parking Space Detector 
+* Handicap Mark Detector 
 
 | Metric  | IoU | Valid Box IoU | Test Box IoU | 
 | --- | --- | --- | --- | 
