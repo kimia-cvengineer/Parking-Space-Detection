@@ -17,11 +17,11 @@ We support two model builders relying on MaskRCNN. To boost the performance and 
 
 * Mask R-CNN Resnet50_FPN
 
-Mask R-CNN model with a ResNet-50-FPN backbone from the Mask R-CNN paper.
+  Mask R-CNN model with a ResNet-50-FPN backbone from the Mask R-CNN paper.
 
 * Mask R-CNN Resnet50_FPN_V2
 
-Improved Mask R-CNN model with a ResNet-50-FPN backbone from the Benchmarking Detection Transfer Learning with Vision Transformers paper.
+  Improved Mask R-CNN model with a ResNet-50-FPN backbone from the Benchmarking Detection Transfer Learning with Vision Transformers paper.
 
 
 # Dataset
