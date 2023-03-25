@@ -7,24 +7,18 @@ from Utils.utils import get_mark_spot_correspondences, filter_model_output
 from Utils.visualize import draw_predictions
 
 device = torch.device('cpu')
-# img_path = './data/images/GOPR6754.JPG'
 img_path = './data/images/GOPR6743.JPG'
-img_path = 'C:\\Users\\kimia\\Desktop\\parking_lot2.jpg'
+
 # Get Parking Sign prediction
 marks = MarkDetector.get_prediction(img_path, device)[0]
-print("mark preds : ", marks['labels'].shape)
 
 # Get Parking Space prediction
 spots = SpaceDetector.get_prediction(img_path, device)[0]
 
-print("spot preds : ", spots['labels'].shape)
-
 # filter out predictions
 marks = filter_model_output([marks], score_threshold=.2)[0]
-print("filtered mark preds : ", marks['labels'].shape)
 
 spots = filter_model_output([spots], score_threshold=.6)[0]
-print("filtered spot preds : ", spots['labels'].shape)
 
 marks_len = marks['labels'].nelement()
 # Merge predictions
