@@ -41,14 +41,14 @@ Outputs regular and accessible parking spot along with their occupancy
 
 # Datasets
 
-1. ACPDS:
+* ACPDS:
 The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera ([paper](https://arxiv.org/pdf/2107.12207.pdf) and [repo](https://github.com/martin-marek/parking-space-occupancy)).
 
    Here is a sample from the dataset:
 
 <img src="/Modules/Space/illustrations/dataset_sample.jpg" width="500" alt="alt_text">
 
-2. Custom dataset:
+* Custom dataset:
 Combination of ACPDS and online resourses. 
 
    Here is a sample from the dataset:
