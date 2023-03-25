@@ -24,14 +24,14 @@ In this repository, we provide:
 1. ACPDS:
 The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera ([paper](https://arxiv.org/pdf/2107.12207.pdf) and [repo](https://github.com/martin-marek/parking-space-occupancy)).
 
-Here is a sample from the dataset:
+   Here is a sample from the dataset:
 
 <img src="/Modules/Space/illustrations/dataset_sample.jpg" width="500" alt="alt_text">
 
 2. Custom dataset:
 Combination of ACPDS and online resourses. 
 
-Here is a sample from the dataset:
+   Here is a sample from the dataset:
 
 <img src="/Modules/Mark/illustrations/dataset_sample.png" width="500" alt="alt_text">
 
@@ -41,6 +41,15 @@ To run inference on the trained model and get the prediction, run [main.py](main
 
 | ![alt text](/Illustrations/prediction_visualiztion_sample_img1.png) | ![alt text](/Illustrations/prediction_visualiztion_sample_img2.png) |
 | ------------ | ------------ |
+
+# Results
+
+1. Parking Space Detector 
+| Metric  | IoU | Valid Box IoU | Valid Segm IoU | Test Box IoU | Test Segm IoU |
+| ------------- | ------------- |
+| mAP | 0.5 | 0.622 | 0.563 | 0.537 | 0.473 |
+| mAP  | 0.5:0.95  | 0.334 | 0.300 | 0.260 | 0.229|
+| mAR  | 0.5:0.95  | 0.421 | 0.368 | 0.339 | 0.291|
 
 
 # Training
