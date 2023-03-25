@@ -23,17 +23,17 @@ In this repository, we provide:
 We split the project into three main tasks. 
 * Parking space detection
 
-   Detects the location of each parking spot in a parking lot
-   Classifies the occupancy of each spot
+   - Detects the location of each parking spot in a parking lot
+   - Classifies the occupancy of each spot
    
 * Handicap mark detection
 
-   Finds the location of the painted handicap marks on the ground
+   - Finds the location of the painted handicap marks on the ground
    
 * Final detector
 
-   Combines outputs of parking space and handicap mark detectors
-   Outputs regular and accessible parking spot along with their occupancy
+   - Combines outputs of parking space and handicap mark detectors
+   - Outputs regular and accessible parking spot along with their occupancy
 
 
 # Datasets
