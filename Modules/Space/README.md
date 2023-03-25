@@ -13,7 +13,7 @@ In the aerial view of parking lots, parking spots are small and densely packed, 
 
 # Model Builder
 
-We support two model builders relying on MaskRCNN. To boost the performance and prevent from overfitting, we trained the model with pre-trained weights.
+We support two model builders relying on MaskRCNN. To boost the model performance and prevent it from overfitting, we trained the model with pre-trained weights.
 
 * Mask R-CNN Resnet50_FPN
 
