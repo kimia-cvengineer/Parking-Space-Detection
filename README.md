@@ -18,6 +18,26 @@ In this repository, we provide:
    
    In parking lots, there are some spaces allocated to people with disabilities to improve their accessibility to the spots. To help them automatically find those spaces, we proposed an image-based smart parking system that looks for available regular and accessible parking spots. Thus, this project highlights the importance of developing automatic parking systems with special attention to accessible parking spots in order to create a more equitable and accessible urban environment.
 
+# Methodology
+
+We split the project into three main tasks. 
+* Parking space detection
+* Handicap mark detection
+* Final detector
+
+1. Parking space detector
+
+Detects the location of each parking spot in a parking lot
+Classifies the occupancy of each spot
+
+2. Handicap mark detector
+
+Finds the location of the painted handicap marks on the ground
+
+3. Final detector
+
+Combines outputs of parking space and handicap mark detectors
+Outputs regular and accessible parking spot along with their occupancy
 
 # Datasets
 
