@@ -1,6 +1,6 @@
 # Image-Based Parking Space Detection and Occupancy Classification
 
-![Model Architecture]('/Illustrations/PSDet%20Architecture.png')
+![Model Architecture](/Illustrations/PSDet%20Architecture.png)
 
 # Introduction
 
