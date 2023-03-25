@@ -45,12 +45,20 @@ To run inference on the trained model and get the prediction, run [main.py](main
 # Results
 
 1. Parking Space Detector 
-| Metric  | IoU | Valid Box IoU | Valid Segm IoU | Test Box IoU | Test Segm IoU |
-| ------------- | ------------- |
-| mAP | 0.5 | 0.622 | 0.563 | 0.537 | 0.473 |
-| mAP  | 0.5:0.95  | 0.334 | 0.300 | 0.260 | 0.229|
-| mAR  | 0.5:0.95  | 0.421 | 0.368 | 0.339 | 0.291|
 
+| Metric  | IoU | Valid Box IoU | Valid Segm IoU | Test Box IoU | Test Segm IoU |
+| ------------- | ------------- | 
+| mAP | 0.5 | 0.622 | 0.563 | 0.537 | 0.473 | 
+| mAP  | 0.5:0.95  | 0.334 | 0.300 | 0.260 | 0.229| 
+| mAR  | 0.5:0.95  | 0.421 | 0.368 | 0.339 | 0.291| 
+
+2. Parking Space Detector 
+
+| Metric  | IoU | Valid Box IoU | Test Box IoU | 
+| ------------- | ------------- | 
+| mAP | 0.5 | 0.622 | 0.563 | 
+| mAP  | 0.5:0.95  | 0.334 | 
+| mAR  | 0.5:0.95  | 0.421 | 
 
 # Training
 
