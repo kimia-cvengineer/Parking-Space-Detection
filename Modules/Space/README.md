@@ -6,12 +6,12 @@ In this repository, we provide:
 - download links for the [ACPDS dataset](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Frois_gopro.zip), [training logs](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Fpaper_training_output.zip), and [model weights](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2FRCNN_128_square_gopro.pt)
 - Colab notebooks to [explore the dataset and models](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/model_playground.ipynb), [train a model](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train.ipynb), and [plot the training logs](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train_log_analysis.ipynb)
 
-# Introcudtion
+## Introcudtion
 
 In the aerial view of parking lots, parking spots are small and densely packed, resulting in the foreground and background class imbalance. In addition, due to the complexity and irregular shape of parking spaces, working with well-aligned bounding boxes resulted in a high overlap between each spot and its adjacents, making detection a challenging task. To address this issue, we used the Mask R-CNN model to consider segmentation masks. This improves the detection performance, because by using only Faster R-CNN, we got the x- and y-axis aligned bounding boxes which includes a larger area around each spot. However, the actual spots are not well aligned and have orientations with respect to the x and y axes. So, predicting masks for parking spots yields better performance.
 
 
-# Model Builder
+## Model Builder
 
 We support two model builders relying on MaskRCNN. To boost the model performance and prevent it from overfitting, we trained the model with pre-trained weights.
 
@@ -24,14 +24,14 @@ We support two model builders relying on MaskRCNN. To boost the model performanc
   Improved Mask R-CNN model with a ResNet-50-FPN backbone from the Benchmarking Detection Transfer Learning with Vision Transformers paper.
 
 
-# Dataset
+## Dataset
 
 ACPDS
 The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera. Here is a sample from the dataset:
 
 <img src="/Modules/Space/illustrations/dataset_sample.jpg" width="500">
 
-# Inference
+## Inference
 
 Here's an example to run inference on a trained model and visualize the model predictions on an image. For more, please see the [demo notebook](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/model_playground.ipynb).
 
@@ -58,7 +58,7 @@ vis.show_mask_predictions([img], preds, score_threshold=.4)
 vis.show_box_predictions([img], preds, score_threshold=.4, box_width=15)
 ```
 
-# Training
+## Training
 
 Models were trained and evaluated on 12th Gen Intel(R) Core(TM) i9-12900K CPU, 64 GB RAM, and Nvidia **GeForce RTX 3060** graphics card. 
 
