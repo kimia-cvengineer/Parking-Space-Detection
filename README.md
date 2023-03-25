@@ -25,16 +25,16 @@ We split the project into three main tasks.
 * Handicap mark detection
 * Final detector
 
-1. Parking space detector
+## Parking space detector
 
 Detects the location of each parking spot in a parking lot
 Classifies the occupancy of each spot
 
-2. Handicap mark detector
+## Handicap mark detector
 
 Finds the location of the painted handicap marks on the ground
 
-3. Final detector
+## Final detector
 
 Combines outputs of parking space and handicap mark detectors
 Outputs regular and accessible parking spot along with their occupancy
