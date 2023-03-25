@@ -6,45 +6,33 @@ In this repository, we provide:
 - download links for the [ACPDS dataset](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Frois_gopro.zip), [training logs](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Fpaper_training_output.zip), and [model weights](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2FRCNN_128_square_gopro.pt)
 - Colab notebooks to [explore the dataset and models](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/model_playground.ipynb), [train a model](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train.ipynb), and [plot the training logs](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train_log_analysis.ipynb)
 
-# Datasets
+# Dataset
 
-1. ACPDS
+ACPDS
 The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera. Here is a sample from the dataset:
 
 ![alt text](/Modules/Space/illustrations/dataset_sample.jpg)
 
-2. Custom dataset
-Combination of ACPDS and online resourses. Here is a sample from the dataset:
-![alt text](/Modules/Mark/illustrations/dataset_sample.png)
-
 # Inference
 
-Here's a minimal example to run inference on a trained model. For more, please see the [demo notebook](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/model_playground.ipynb).
+Here's an example to run inference on a trained model and visualize the model predictions on an image. For more, please see the [demo notebook](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/model_playground.ipynb).
 
 ```python
-import torch, os, requests
-from models.rcnn import RCNN
-from utils_funcs import transforms
+from inference import get_mask_rcnn_model as MaskRCNN
+from utils_funcs import visualize as vis
+from inference import predict
 
 device = torch.device('cpu')
 
 # create model
 model = MaskRCNN(weights='model_weights', device=device)
 
-# load model weights
-weights_path = 'weights.pt'
-if not os.path.exists(weights_path):
-    r = requests.get('https://storage.googleapis.com/pd-models/RCNN_128_square_gopro.pt')
-    with open(weights_path, 'wb') as f:
-        f.write(r.content)
-model.load_state_dict(torch.load(weights_path, map_location='cpu'))
-
 # inference
 img_path = 'dataset/data/images/GOPR6543.JPG'
 img = read_image(img_path)
 preds = predict(model=model, img_path=img_path, device=device)
 
-# predictions visualization
+# Predictions visualization
 # Draw predicted masks
 vis.show_mask_predictions([img], preds, score_threshold=.4)
 
@@ -54,5 +42,22 @@ vis.show_box_predictions([img], preds, score_threshold=.4, box_width=15)
 
 # Training
 
-To reproduce our full results from the paper, please run the [train_all_models](train_all_models.py) script locally. To train just a single model, please use the provided [Colab notebook](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train.ipynb) – Google Colab is sufficient for this.
+Models were trained and evaluated on 12th Gen Intel(R) Core(TM) i9-12900K CPU, 64 GB RAM, and Nvidia **GeForce RTX 3060** graphics card. 
+
+Here's an example to train a model given ACPDS dataset. You can also use the provided [Colab notebook](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train.ipynb).
+
+```python
+from dataset import acpds
+from utils_funcs.engine import train_model
+from models.rcnn_fpn import create_model
+
+# load dataset
+train_ds, valid_ds, test_ds = acpds.create_datasets('dataset/data', 1, res=1800)
+
+# train model
+model = create_model()
+train_model(, train_ds, valid_ds, test_ds, out_dir, device, epochs=30, lr=0.00008)
+
+torch.cuda.empty_cache()
+```
 
