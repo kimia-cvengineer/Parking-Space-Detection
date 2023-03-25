@@ -6,12 +6,30 @@ In this repository, we provide:
 - download links for the [ACPDS dataset](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Frois_gopro.zip), [training logs](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2Fpaper_training_output.zip), and [model weights](https://pub-e8bbdcbe8f6243b2a9933704a9b1d8bc.r2.dev/parking%2FRCNN_128_square_gopro.pt)
 - Colab notebooks to [explore the dataset and models](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/model_playground.ipynb), [train a model](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train.ipynb), and [plot the training logs](https://colab.research.google.com/github/martin-marek/parking-space-occupancy/blob/main/notebooks/train_log_analysis.ipynb)
 
+# Introcudtion
+
+In the aerial view of parking lots, parking spots are small and densely packed, resulting in the foreground and background class imbalance. In addition, due to the complexity and irregular shape of parking spaces, working with well-aligned bounding boxes resulted in a high overlap between each spot and its adjacents, making detection a challenging task. To address this issue, we used the Mask R-CNN model to consider segmentation masks. This improves the detection performance, because by using only Faster R-CNN, we got the x- and y-axis aligned bounding boxes which includes a larger area around each spot. However, the actual spots are not well aligned and have orientations with respect to the x and y axes. So, predicting masks for parking spots yields better performance.
+
+
+# Model Builder
+
+We support two model builders relying on MaskRCNN. To boost the performance and prevent from overfitting, we trained the model with pre-trained weights.
+
+* Mask R-CNN Resnet50_FPN
+
+Mask R-CNN model with a ResNet-50-FPN backbone from the Mask R-CNN paper.
+
+* Mask R-CNN Resnet50_FPN_V2
+
+Improved Mask R-CNN model with a ResNet-50-FPN backbone from the Benchmarking Detection Transfer Learning with Vision Transformers paper.
+
+
 # Dataset
 
 ACPDS
 The dataset contains 293 images captured at a roughly 10-meter height using a GoPro Hero 6 camera. Here is a sample from the dataset:
 
-![alt text](/Modules/Space/illustrations/dataset_sample.jpg)
+<img src="/Modules/Space/illustrations/dataset_sample.jpg" width="500">
 
 # Inference
 
