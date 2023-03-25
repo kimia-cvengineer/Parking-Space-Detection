@@ -1,7 +1,8 @@
 # Image-Based Parking Space Detection and Occupancy Classification
 
-      With the increasing number of vehicles on the road, parking spaces have become scarce resources in urban areas, and it can be challenging to find available spots, especially for people with disabilities. Automatic parking space detection can not only facilitate the process of looking for an available parking spot but also help drivers save time and effectively reduce emissions as well as traffic congestion by navigating directly to the pre-suggested spot.
-      In parking lots, there are some spaces allocated to people with disabilities to improve their accessibility to the spots. To help them automatically find those spaces, we proposed an image-based smart parking system that looks for available regular and accessible parking spots. Thus, this project highlights the importance of developing automatic parking systems with special attention to accessible parking spots in order to create a more equitable and accessible urban environment.
+   With the increasing number of vehicles on the road, parking spaces have become scarce resources in urban areas, and it can be challenging to find available spots, especially for people with disabilities. Automatic parking space detection can not only facilitate the process of looking for an available parking spot but also help drivers save time and effectively reduce emissions as well as traffic congestion by navigating directly to the pre-suggested spot.
+   
+   In parking lots, there are some spaces allocated to people with disabilities to improve their accessibility to the spots. To help them automatically find those spaces, we proposed an image-based smart parking system that looks for available regular and accessible parking spots. Thus, this project highlights the importance of developing automatic parking systems with special attention to accessible parking spots in order to create a more equitable and accessible urban environment.
 
 
 
