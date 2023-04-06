@@ -85,12 +85,9 @@ To reproduce our full results or further improve the models performance, please 
 # Citation
 
 ```bibtex
-@misc{marek2021imagebased,
-      title={Image-Based Parking Space Occupancy Classification: Dataset and Baseline}, 
-      author={Martin Marek},
-      year={2021},
-      eprint={2107.12207},
-      archivePrefix={arXiv},
-      primaryClass={cs.CV}
+@misc{kimiayuchen2023imagebased,
+      title={Image-Based Parking Space Detection and Classification}, 
+      authors={Kimia Afshari, Yuchen Hou},
+      year={2023}
 }
 ```
