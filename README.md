@@ -86,7 +86,7 @@ To reproduce our full results or further improve the models performance, please 
 
 ```bibtex
 @misc{kimiayuchen2023imagebased,
-      title={Image-Based Parking Space Detection and Classification}, 
+      title={Image-Based Parking Space Detection and Occupancy Classification}, 
       authors={Kimia Afshari, Yuchen Hou},
       year={2023}
 }
