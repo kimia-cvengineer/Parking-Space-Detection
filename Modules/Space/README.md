@@ -58,7 +58,7 @@ vis.show_mask_predictions([img], preds, score_threshold=.4)
 # Draw predicted boxes
 vis.show_box_predictions([img], preds, score_threshold=.4, box_width=15)
 ```
-
+* Note: boxes are in the format of [xmin, ymin, xmax, ymax] as reference.
 ## Training
 
 Models were trained and evaluated on 12th Gen Intel(R) Core(TM) i9-12900K CPU, 64 GB RAM, and Nvidia **GeForce RTX 3060** graphics card. 
